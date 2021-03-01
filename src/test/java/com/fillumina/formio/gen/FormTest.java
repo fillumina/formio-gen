@@ -58,7 +58,7 @@ public class FormTest {
                     .maxLength(20)
                     .minLength(1)) );
         
-        System.out.println(form.toJSONObject().toString(4));
+        System.out.println(HtmlGenerator.generateHtml(form.toJSONObject()));
         
     }
 }
