@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class DataComponent extends Component<DataComponent> {
 

@@ -5,7 +5,7 @@ import net.codestory.http.payload.Payload;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class App {
 
@@ -18,11 +18,18 @@ public class App {
         new WebServer().configure(routes -> routes
                 .get("/", html)
                 .post("/form_post", context -> {
-                    String content = context.request().content();
-                    System.out.println("POST: \n" + content);
+                    String jsonResponse = context.request().content();
+                    System.out.println("POST: \n" + jsonResponse);
+                    INSTANCE.validateJsonResponse(form, jsonResponse);
+                    System.out.println("POST: \n" + jsonResponse);
                     return Payload.created();
                 })
         ).start();
+    }
+    
+    private void validateJsonResponse(Form form, String response) {
+        FormResponse formResponse = form.validateJson(response);
+        System.out.println("END");
     }
 
     private Form createForm() {
@@ -43,7 +50,8 @@ public class App {
         form.addComponent(new FloatComponent("float123")
                 .label("Height")
                 .placeholder("Tell your real height")
-                .multiple(true)
+                .multipleMin(2)
+                .multipleMax(3)
                 .required(true));
         form.addComponent(new IntegerComponent("int123")
                 .label("Age")

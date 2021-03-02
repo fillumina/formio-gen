@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class HtmlGenerator {
 
@@ -16,6 +16,7 @@ public class HtmlGenerator {
             "  <link rel=\"stylesheet\" href=\"https://cdn.form.io/formiojs/formio.full.min.css\">\n" +
             "  <script src=\"https://cdn.form.io/formiojs/formio.full.min.js\"></script>\n" +
             "    <script type='text/javascript'>\n" +
+            "      var global_data = {};\n" +
             "      window.onload = function() {\n" +
             "        Formio.icons = 'fontawesome';\n" +
             "        Formio.createForm(document.getElementById('formio'),\n";
@@ -60,10 +61,12 @@ public class HtmlGenerator {
             "    console.log('sending', submission);\n" +
             "    sendJSON(submission);\n" +
             "    console.log('sent', submission);\n" +
+            "    form.emit('submitDone', submission);\n" +
             "  });\n" +
             "  \n" +
             "  // Everytime the form changes, this will fire.\n" +
             "  form.on('change', function(changed) {\n" +
+            "    global_data = changed.data;\n" +
             "    console.log('Form was changed', changed);\n" +
             "  });\n" +
             "});\n" +

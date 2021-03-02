@@ -1,3 +1,3 @@
 # Formio-gen
 
-Helper to generates the JSON description for the [formio](https://github.com/formio/formio) project.
+Helper to generates the JSON form description for the [formio](https://github.com/formio/formio) project.

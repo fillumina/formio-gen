@@ -2,7 +2,7 @@ package com.fillumina.formio.gen;
 
 /**
  *
- * @author fra
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public enum Theme {
     _default, _primary, _success, _info, _warning, _danger;
