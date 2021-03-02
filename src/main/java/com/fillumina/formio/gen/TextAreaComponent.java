@@ -14,9 +14,4 @@ public class TextAreaComponent extends Component<TextAreaComponent> {
         json.put("rows", rows);
         return this;
     }
-    
-    public TextAreaComponent wysiwyg(boolean wysiwyg) {
-        json.put("wysiwyg", wysiwyg);
-        return this;
-    }
 }

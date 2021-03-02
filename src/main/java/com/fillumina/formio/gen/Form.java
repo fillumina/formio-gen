@@ -7,9 +7,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- *
+ * @see https://help.form.io/
+ * @see https://github.com/formio/formio.js
+ * @see https://formio.github.io/formio.js/app/examples/
+ * @see https://formio.github.io/formio.js/docs/class/src/components/Components.js~Components.html
+ * @see https://github.com/formio/formio.js/wiki/Form-JSON-Schema
+ * 
  * @author fra
  */
+// TODO add error management
 public class Form {
     
     private final JSONObject json;

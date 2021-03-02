@@ -16,6 +16,13 @@
             <artifactId>json</artifactId>
             <version>20201115</version>
         </dependency>
+        <!-- https://github.com/CodeStory/fluent-http -->
+        <dependency>
+            <groupId>net.code-story</groupId>
+            <artifactId>http</artifactId>
+            <version>2.105</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

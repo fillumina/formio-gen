@@ -18,13 +18,35 @@ public abstract class Component<T extends Component<T>> {
         json.put("tableView", false);
         json.put("input", true);
         json.put("key", key);
+        json.put("persistent", true); // don't know exactly
+        json.put("path", "clothing");
     }
 
     public JSONObject toJSONObject() {
         json.put("validate", validate);
         return json;
     }
-
+    
+    public T tabIndex(int tabIndex) {
+        json.put("tabindex", tabIndex);
+        return (T) this;
+    }
+    
+    public T tableView(boolean tableView) {
+        json.put("tableView", tableView);
+        return (T) this;
+    }
+    
+    public T theme(Theme theme) {
+        json.put("theme", theme.toString());
+        return (T) this;
+    }
+    
+    public T theme(String theme) {
+        json.put("theme", theme);
+        return (T) this;
+    }
+    
     public T label(String label) {
         json.put("label", label);
         return (T) this;

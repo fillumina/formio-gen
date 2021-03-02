@@ -12,25 +12,12 @@ import org.json.JSONObject;
  */
 public class Panel extends Component<Panel> {
     
-    public static enum Theme {
-        _default, primary, success, info, warning, danger
-    }
     
     private final List<Component<?>> components;
     
     public Panel(String key) {
         super("panel", key); // checkout panel also
         components = new ArrayList<>();
-    }
-    
-    public Panel theme(Theme theme) {
-        json.put("theme", theme.toString().replace("_", ""));
-        return this;
-    }
-    
-    public Panel theme(String theme) {
-        json.put("theme", theme);
-        return this;
     }
     
     public Panel title(String title) {
