@@ -129,6 +129,7 @@ public abstract class Component<T extends Component<T>> {
         return (T) this;
     }
 
+    /** Unlimited */
     public T multiple(boolean multiple) {
         this.multiple = multiple;
         json.put("multiple", multiple);

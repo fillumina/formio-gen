@@ -21,7 +21,6 @@ public class App {
                     String jsonResponse = context.request().content();
                     System.out.println("POST: \n" + jsonResponse);
                     INSTANCE.validateJsonResponse(form, jsonResponse);
-                    System.out.println("POST: \n" + jsonResponse);
                     return Payload.created();
                 })
         ).start();
@@ -76,8 +75,8 @@ public class App {
                         .label("In the panel")
                         .maxLength(20)
                         .minLength(1)));
-        form.addComponent(new SubmitComponent().label("Invia"));
-        form.addComponent(new CancelComponent().label("Pulisci"));
+        form.addComponent(new SubmitComponent().label("Send Form"));
+        form.addComponent(new CancelComponent().label("Clear Data"));
         return form;
     }
 }
