@@ -18,7 +18,8 @@ public enum FormError {
     ENUM_ITEM_NOT_PRESENT("enum.item.missing"),
     MIN_VALUE("min.value"),
     MAX_VALUE("max.value"),
-    NUMBER_FORMAT("number.format")
+    NUMBER_FORMAT("number.format"),
+    BOOLEAN_NOT_FOUND("boolean.not.found")
     ;
 
     private final String description;

@@ -4,13 +4,13 @@ package com.fillumina.formio.gen;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class FieldSet extends Container<FieldSet> {
+public class FieldSetContainer extends Container<FieldSetContainer> {
     
-    public FieldSet(String key) {
+    public FieldSetContainer(String key) {
         super("fieldset", key);
     }
     
-    public FieldSet legend(String legend) {
+    public FieldSetContainer legend(String legend) {
         json.put("legend", legend);
         return this;
     }

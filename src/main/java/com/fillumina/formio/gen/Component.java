@@ -34,6 +34,7 @@ public abstract class Component<T extends Component<T>> {
         json.put("key", key);
         json.put("persistent", true); // don't know exactly
         json.put("path", "clothing");
+        multiple(false);
     }
 
     /**
@@ -43,27 +44,30 @@ public abstract class Component<T extends Component<T>> {
      */
     public ComponentValue validate(Object value) {
         List<Object> list = toList(value);
-        if (required == Boolean.TRUE && (list == null || list.stream().anyMatch(o -> o == null)) ) {
+        if ((required == Boolean.TRUE || (minLength != null && minLength > 0)) && 
+                (list == null || list.stream().anyMatch(o -> o == null)) ) {
             return new ComponentValue(key, list, FormError.NULL_VALUE);
         }
-        if (multiple == Boolean.FALSE && list.size() > 1) {
-            return new ComponentValue(key, list, FormError.MULTIPLE_VALUES);
-        }
-        if (multipleMin != null && list.size() < multipleMin) {
-            return new ComponentValue(key, list, FormError.MULTIPLE_VALUES_TOO_FEW);
-        }
-        if (multipleMax != null && list.size() > multipleMax) {
-            return new ComponentValue(key, list, FormError.MULTIPLE_VALUES_TOO_MANY);
-        }
-        if (minLength != null && list.stream().anyMatch(o -> o.toString().length() < minLength)) {
-            return new ComponentValue(key, list, FormError.LENGTH_TOO_SHORT);
-        }
-        if (maxLength != null && list.stream().anyMatch(o -> o.toString().length() > maxLength)) {
-            return new ComponentValue(key, list, FormError.LENGTH_TOO_LONG);
-        }
-        if (pattern != null && 
-                list.stream().anyMatch(o -> !pattern.matcher(o.toString()).matches() ) ) {
-            return new ComponentValue(key, list, FormError.PATTERN_NOT_MATCHING);
+        if (list != null) {
+            if (multiple == Boolean.FALSE && list.size() > 1) {
+                return new ComponentValue(key, list, FormError.MULTIPLE_VALUES);
+            }
+            if (multipleMin != null && list.size() < multipleMin) {
+                return new ComponentValue(key, list, FormError.MULTIPLE_VALUES_TOO_FEW);
+            }
+            if (multipleMax != null && list.size() > multipleMax) {
+                return new ComponentValue(key, list, FormError.MULTIPLE_VALUES_TOO_MANY);
+            }
+            if (minLength != null && list.stream().anyMatch(o -> o.toString().length() < minLength)) {
+                return new ComponentValue(key, list, FormError.LENGTH_TOO_SHORT);
+            }
+            if (maxLength != null && list.stream().anyMatch(o -> o.toString().length() > maxLength)) {
+                return new ComponentValue(key, list, FormError.LENGTH_TOO_LONG);
+            }
+            if (pattern != null && 
+                    list.stream().anyMatch(o -> !pattern.matcher(o.toString()).matches() ) ) {
+                return new ComponentValue(key, list, FormError.PATTERN_NOT_MATCHING);
+            }
         }
         return innerValidate(list);
     }
@@ -163,6 +167,12 @@ public abstract class Component<T extends Component<T>> {
     public T maxLength(int maxLength) {
         this.maxLength = maxLength;
         validate.put("maxLength", maxLength);
+        return (T) this;
+    }
+
+    public T pattern(Pattern pattern) {
+        this.pattern = pattern;
+        validate.put("pattern", pattern);
         return (T) this;
     }
 

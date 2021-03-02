@@ -65,7 +65,7 @@ public class App {
                 .placeholder("Say something about you")
                 .rows(5)
                 .required(false));
-        form.addComponent(new FieldSet("panel123")
+        form.addComponent(new FieldSetContainer("panel123")
                 .label("Panel 1")
                 .legend("field set of my dreams")
                 //.title("Title panel 1")
@@ -75,8 +75,11 @@ public class App {
                         .label("In the panel")
                         .maxLength(20)
                         .minLength(1)));
-        form.addComponent(new SubmitComponent().label("Send Form"));
-        form.addComponent(new CancelComponent().label("Clear Data"));
+        form.addComponent(new ColumnsContainer("col123")
+            .createColumn().addComponent(new SubmitComponent().label("Send Form")).endCol()
+            .createColumn().addComponent(new CancelComponent().label("Clear Data")).endCol());
+//        form.addComponent(new SubmitComponent().label("Send Form"));
+//        form.addComponent(new CancelComponent().label("Clear Data"));
         return form;
     }
 }

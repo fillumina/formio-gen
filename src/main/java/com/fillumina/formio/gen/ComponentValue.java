@@ -47,7 +47,11 @@ public class ComponentValue {
         return values;
     }
 
-    public String getError(Locale locale) {
+    public FormError getError() {
+        return error;
+    }
+
+    public String getErrorDescription(Locale locale) {
         return error.getError(locale, validation);
     }
 
