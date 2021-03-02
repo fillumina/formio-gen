@@ -13,8 +13,6 @@ public class IntegerComponent extends Component<IntegerComponent> {
 
     private BigInteger min;
     private BigInteger max;
-    private Boolean minInclusive;
-    private Boolean maxInclusive;
     
     public IntegerComponent(String key) {
         super("number", key);
@@ -51,13 +49,11 @@ public class IntegerComponent extends Component<IntegerComponent> {
             String s = Objects.toString(o);
             try {
                 BigInteger integer = new BigInteger(s);
-                int compareMin = minInclusive == Boolean.TRUE ? 0 : -1;
-                if (min != null && integer.compareTo(min) <= compareMin) {
+                if (min != null && integer.compareTo(min) <= -1) {
                     return new ComponentValue(getKey(), list, 
                             FormError.MIN_VALUE, integer.toString());
                 }
-                int compareMax = maxInclusive == Boolean.TRUE ? 0 : 1;
-                if (max != null && integer.compareTo(max) >= compareMin) {
+                if (max != null && integer.compareTo(max) >= 1) {
                     return new ComponentValue(getKey(), list, 
                             FormError.MAX_VALUE, integer.toString());
                 }

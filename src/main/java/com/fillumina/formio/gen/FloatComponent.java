@@ -60,13 +60,13 @@ public class FloatComponent extends Component<FloatComponent> {
             String s = Objects.toString(o);
             try {
                 BigDecimal dec = new BigDecimal(s);
-                int compareMin = minInclusive == Boolean.TRUE ? 0 : -1;
-                if (min != null && dec.compareTo(min) <= compareMin) {
+                int compareMin = minInclusive == Boolean.TRUE ? 0 : 1;
+                if (min != null && dec.compareTo(min) < compareMin) {
                     return new ComponentValue(getKey(), list, 
                             FormError.MIN_VALUE, dec.toPlainString());
                 }
-                int compareMax = maxInclusive == Boolean.TRUE ? 0 : 1;
-                if (max != null && dec.compareTo(max) >= compareMin) {
+                int compareMax = maxInclusive == Boolean.TRUE ? 0 : -1;
+                if (max != null && dec.compareTo(max) > compareMax) {
                     return new ComponentValue(getKey(), list, 
                             FormError.MAX_VALUE, dec.toPlainString());
                 }
