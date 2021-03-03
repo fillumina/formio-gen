@@ -9,3 +9,8 @@ See:
  * https://formio.github.io/formio.js/app/examples/
  * https://formio.github.io/formio.js/docs/class/src/components/Components.js~Components.html
  * https://github.com/formio/formio.js/wiki/Form-JSON-Schema
+ * https://formio.github.io/formio.js/app/sandbox
+
+TO DO:
+
+ * Adding data containers support such as data grid and data map.
