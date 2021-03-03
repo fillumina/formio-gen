@@ -19,6 +19,11 @@ public class HtmlComponent extends Component<HtmlComponent,Void> {
     }
 
     @Override
+    protected boolean isValue() {
+        return false;
+    }
+    
+    @Override
     public Void convert(String s) throws ParseException {
         return null;
     }
