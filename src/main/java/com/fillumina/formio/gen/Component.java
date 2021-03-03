@@ -18,7 +18,7 @@ public abstract class Component<T extends Component<T,V>,V> {
     private final String key;
     protected final JSONObject json;
     protected final JSONObject validate;
-    private Function<V,String> externalValidator;
+    private Function<V,Object> externalValidator;
 
     private Integer multipleMin;
     private Integer multipleMax;
@@ -51,7 +51,7 @@ public abstract class Component<T extends Component<T,V>,V> {
         return true;
     }
     
-    public T externalValidator(Function<V,String> validator) {
+    public T externalValidator(Function<V,Object> validator) {
         this.externalValidator = validator;
         return (T) this;
     }
@@ -94,10 +94,10 @@ public abstract class Component<T extends Component<T,V>,V> {
             }
             if (externalValidator != null) {
                 for (V v : list) {
-                    String error = externalValidator.apply(v);
+                    Object error = externalValidator.apply(v);
                     if (error != null) {
                         return new ComponentValue(key, list, 
-                                FormError.EXTERNAL_VALIDATOR, error);
+                                FormError.EXTERNAL_VALIDATOR, error.toString());
                     }
                 }
             }
