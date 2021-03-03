@@ -21,7 +21,8 @@ public enum FormError {
     DATE_BEFORE_MIN("date.min"),
     DATE_AFTER_MAX("date.max"),
     PARSE_EXCEPTION("format.error"),
-    MISSING("component.value.missing")
+    MISSING("component.value.missing"),
+    EXTERNAL_VALIDATOR("external.validator")
     ;
 
     private final String description;

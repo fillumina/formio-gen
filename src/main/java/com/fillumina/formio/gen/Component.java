@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ public abstract class Component<T extends Component<T,V>,V> {
     private final String key;
     protected final JSONObject json;
     protected final JSONObject validate;
+    private Function<V,String> externalValidator;
 
     private Integer multipleMin;
     private Integer multipleMax;
@@ -47,6 +49,11 @@ public abstract class Component<T extends Component<T,V>,V> {
     
     protected boolean isValue() {
         return true;
+    }
+    
+    public T externalValidator(Function<V,String> validator) {
+        this.externalValidator = validator;
+        return (T) this;
     }
     
     /**
@@ -84,6 +91,15 @@ public abstract class Component<T extends Component<T,V>,V> {
             if (pattern != null && 
                     list.stream().anyMatch(o -> !pattern.matcher(o.toString()).matches() ) ) {
                 return new ComponentValue(key, list, FormError.PATTERN_NOT_MATCHING);
+            }
+            if (externalValidator != null) {
+                for (V v : list) {
+                    String error = externalValidator.apply(v);
+                    if (error != null) {
+                        return new ComponentValue(key, list, 
+                                FormError.EXTERNAL_VALIDATOR, error);
+                    }
+                }
             }
         }
         return innerValidate(list);

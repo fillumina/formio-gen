@@ -123,4 +123,13 @@ public class TextFieldComponentTest {
         assertFalse(cv.isErrorPresent());
     }
     
+    @Test
+    public void shouldCheckExternalValidator() {
+        TextFieldComponent text = new TextFieldComponent("txt123");
+        text.externalValidator(s -> "error");
+        ComponentValue cv = text.validate("1234");
+        assertEquals(FormError.EXTERNAL_VALIDATOR, cv.getError());
+        assertTrue(cv.isErrorPresent());
+    }
+    
 }
