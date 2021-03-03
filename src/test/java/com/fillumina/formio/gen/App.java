@@ -37,16 +37,22 @@ public class App {
                 .label("is this true")
                 .placeholder("answer sincerely")
                 .required(false));
-        form.addComponent(new DataComponent("data123")
+        form.addComponent(new DayComponent("date123")
                 .label("birthday")
                 .placeholder("select birthday")
+                .required(true));
+        form.addComponent(new DateTimeComponent("dt123")
+                .label("married")
+                .placeholder("select marriage date")
+                .datePicker(true)
+                .enableTime(false)
                 .required(true));
         form.addComponent(new EnumComponent("enum123")
                 .label("Sex")
                 .placeholder("Say your sex")
                 .values("Male", "Female")
                 .required(true));
-        form.addComponent(new FloatComponent("float123")
+        form.addComponent(new DecimalComponent("float123")
                 .label("Height")
                 .placeholder("Tell your real height")
                 .multipleMin(2)

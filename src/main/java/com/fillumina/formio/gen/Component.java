@@ -2,6 +2,7 @@ package com.fillumina.formio.gen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -73,9 +74,11 @@ public abstract class Component<T extends Component<T>> {
     }
     
     /** 
-     * Called <i>after</i> basic validation has been performed. 
+     * Called <i>after</i> basic validation has been performed.
+     * Overwrite this method to do further validations and/or call super to report no error result.
      */
     protected ComponentValue innerValidate(List<Object> list) {
+        // return no error result
         return new ComponentValue(key, list);
     }
 
@@ -102,6 +105,18 @@ public abstract class Component<T extends Component<T>> {
         json.put("validate", validate);
         return json;
     }
+    
+    public T defaultValue(Object defaultValue) {
+        json.put("defaultValue", Objects.toString(defaultValue));
+        return (T) this;
+    }
+
+    public T defaultValueList(List<Object> defaultValueList) {
+        JSONArray array = new JSONArray(defaultValueList);
+        json.put("defaultValue", array);
+        return (T) this;
+    }
+
     
     public T tabIndex(int tabIndex) {
         json.put("tabindex", tabIndex);

@@ -19,7 +19,10 @@ public enum FormError {
     MIN_VALUE("min.value"),
     MAX_VALUE("max.value"),
     NUMBER_FORMAT("number.format"),
-    BOOLEAN_NOT_FOUND("boolean.not.found")
+    BOOLEAN_NOT_FOUND("boolean.not.found"),
+    DATE_FORMAT("date.format"),
+    DATE_BEFORE_MIN("date.min"),
+    DATE_AFTER_MAX("date.max")
     ;
 
     private final String description;

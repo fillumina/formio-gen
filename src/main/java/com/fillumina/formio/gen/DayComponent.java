@@ -6,9 +6,9 @@ import org.json.JSONObject;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class DataComponent extends Component<DataComponent> {
+public class DayComponent extends Component<DayComponent> {
 
-    public DataComponent(String key) {
+    public DayComponent(String key) {
         super("day", key);
         
         JSONObject fields = new JSONObject();
