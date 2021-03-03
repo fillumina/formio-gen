@@ -24,8 +24,8 @@ public class WysiwygComponent extends TextAreaComponent {
             .requireRelNofollowOnLinks()
             .toFactory();
     
-    private JSONObject wysiwyg;
-    private JSONObject modules;
+    private JSONObject wysiwyg = new JSONObject();
+    private JSONObject modules = new JSONObject();
     private JSONArray toolbar = new JSONArray();
     
     public WysiwygComponent(String key) {

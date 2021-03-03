@@ -70,7 +70,7 @@ public class TextFieldComponentTest {
     @Test
     public void shouldRejectTooFewMultiplicity() {
         TextFieldComponent text = new TextFieldComponent("txt123");
-        text.multipleMin(3);
+        text.minItems(3);
         ComponentValue cv = text.validate("Hello world this is me");
         assertEquals(FormError.MULTIPLE_VALUES_TOO_FEW, cv.getError());
         assertTrue(cv.isErrorPresent());
@@ -79,7 +79,7 @@ public class TextFieldComponentTest {
     @Test
     public void shouldRejectTooManyMultiplicity() {
         TextFieldComponent text = new TextFieldComponent("txt123");
-        text.multipleMax(3);
+        text.maxItems(3);
         ComponentValue cv = text.validate(
                 new JSONArray(Arrays.asList("Hello","world", "this", "is", "me")));
         assertEquals(FormError.MULTIPLE_VALUES_TOO_MANY, cv.getError());

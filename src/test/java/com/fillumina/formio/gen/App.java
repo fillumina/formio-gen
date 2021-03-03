@@ -55,8 +55,8 @@ public class App {
         form.addComponent(new DecimalComponent("float123")
                 .label("Height")
                 .placeholder("Tell your real height")
-                .multipleMin(2)
-                .multipleMax(3)
+                .minItems(2)
+                .maxItems(3)
                 .required(true));
         form.addComponent(new IntegerComponent("int123")
                 .label("Age")

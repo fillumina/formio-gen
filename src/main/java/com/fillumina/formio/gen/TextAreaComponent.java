@@ -14,4 +14,14 @@ public class TextAreaComponent extends StringComponent<TextAreaComponent> {
         json.put("rows", rows);
         return this;
     }
+    
+    public TextAreaComponent showWordCount(boolean showWordCount) {
+        json.put("showWordCount", showWordCount);
+        return this;
+    }
+    
+    public TextAreaComponent showCharCount(boolean showCharCount) {
+        json.put("showCharCount", showCharCount);
+        return this;
+    }
 }

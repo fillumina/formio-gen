@@ -197,13 +197,13 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
     
-    public T multipleMin(int multipleMin) {
+    public T minItems(int multipleMin) {
         this.multipleMin = multipleMin;
         multiple(true);
         return (T) this;
     }
     
-    public T multipleMax(int multipleMax) {
+    public T maxItems(int multipleMax) {
         this.multipleMax = multipleMax;
         multiple(true);
         return (T) this;
