@@ -15,7 +15,7 @@ public class BooleanComponentTest {
     public void shouldRejectWrongBoolean() {
         BooleanComponent comp = new BooleanComponent("txt123");
         ComponentValue cv = comp.validate("yes");
-        assertEquals(FormError.BOOLEAN_NOT_FOUND, cv.getError());
+        assertEquals(FormError.PARSE_EXCEPTION, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
         

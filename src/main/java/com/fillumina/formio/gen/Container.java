@@ -11,16 +11,26 @@ import org.json.JSONObject;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>ncesco Illuminati <fillumina at gmail.com>
  */
-public class Container<T extends Container<T>> extends Component<T> {
+public class Container<T extends Container<T>> extends Component<T,Void> {
     
-    private final Map<String, Component<?>> components;
+    private final Map<String, Component<?,?>> components;
 
     public Container(String type, String key) {
         super(type, key);
         components = new LinkedHashMap<>();
     }
-
-    void addComponents(Map<String, Component<?>> allComponents) {
+    
+    @Override
+    protected boolean isValue() {
+        return false;
+    }
+    
+    @Override
+    public Void convert(String s) {
+        return null;
+    }
+    
+    void addComponents(Map<String, Component<?,?>> allComponents) {
         components.values().forEach(c -> {
             if (c instanceof Container) {
                 ((Container)c).addComponents(allComponents);
@@ -30,7 +40,7 @@ public class Container<T extends Container<T>> extends Component<T> {
         });
     }
     
-    public T addComponent(Component<?> component) {
+    public T addComponent(Component<?,?> component) {
         components.put(component.getKey(), component);
         return (T) this;
     }

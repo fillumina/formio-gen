@@ -1,26 +1,23 @@
 package com.fillumina.formio.gen;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
 
 /**
  * @see https://github.com/formio/formio.js/wiki/DateTime-Component
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class DateTimeComponent extends Component<DateTimeComponent> {
-    public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ssX";
-    public static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm a";
+public class DateTimeComponent extends Component<DateTimeComponent, Date> {
 
     public static enum DateType {
         day, year, week, month
     }
 
-    private String format = DEFAULT_FORMAT;
     private Date minDate;
     private Date maxDate;
 
@@ -28,28 +25,27 @@ public class DateTimeComponent extends Component<DateTimeComponent> {
         super("datetime", key);
     }
 
-    //https://stackoverflow.com/questions/2201925/converting-iso-8601-compliant-string-to-java-util-date/60214805#60214805
-    public Date convert(String s) throws ParseException {
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat(format);
-        df.setTimeZone(tz);
-        Date date = df.parse(s);
-        return date;
-    }
-    
+    //https://stackoverflow.com/a/60214805/203204
     @Override
-    protected ComponentValue innerValidate(List<Object> list) {
+    public Date convert(String s) throws ParseException {
+        if (s == null) {
+            return null;
+        }
+        try {
+            TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(s);
+            Instant i = Instant.from(ta);
+            Date d = Date.from(i);
+            return d;
+        } catch (DateTimeParseException ex) {
+            throw new ParseException(ex.getParsedString(), 0);
+        }
+    }
+
+    @Override
+    protected ComponentValue innerValidate(List<Date> list) {
         if (list != null) {
-            for (Object o : list) {
-                if (o != null) {
-                    String s = Objects.toString(o);
-                    Date date;
-                    try {
-                        date = convert(s);
-                    } catch (ParseException ex) {
-                        return new ComponentValue(getKey(), list,
-                                FormError.DATE_FORMAT);
-                    }
+            for (Date date : list) {
+                if (date != null) {
                     if (minDate != null && date.before(minDate)) {
                         return new ComponentValue(getKey(), list,
                                 FormError.DATE_BEFORE_MIN);
@@ -68,7 +64,6 @@ public class DateTimeComponent extends Component<DateTimeComponent> {
      * required
      */
     public DateTimeComponent format(String format) {
-        this.format = format;
         json.put("format", format);
         return this;
     }

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,7 +13,7 @@ import org.json.JSONObject;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class EnumComponent extends Component<EnumComponent> {
+public class EnumComponent extends StringComponent<EnumComponent> {
 
     private final JSONObject data;
     private Set<String> validValues;
@@ -26,9 +25,8 @@ public class EnumComponent extends Component<EnumComponent> {
     }
 
     @Override
-    protected ComponentValue innerValidate(List<Object> list) {
-        for (Object o : list) {
-            String s = Objects.toString(o);
+    protected ComponentValue innerValidate(List<String> list) {
+        for (String s : list) {
             if (!validValues.contains(s)) {
                 return new ComponentValue(getKey(), list, 
                         FormError.ENUM_ITEM_NOT_PRESENT, s);

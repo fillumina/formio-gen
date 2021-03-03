@@ -1,14 +1,14 @@
 package com.fillumina.formio.gen;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class DecimalComponent extends Component<DecimalComponent> {
+public class DecimalComponent extends Component<DecimalComponent,BigDecimal> {
 
     private BigDecimal min;
     private BigDecimal max;
@@ -55,30 +55,32 @@ public class DecimalComponent extends Component<DecimalComponent> {
     }
 
     @Override
-    protected ComponentValue innerValidate(List<Object> list) {
+    protected ComponentValue innerValidate(List<BigDecimal> list) {
         if (list != null) {
-            for (Object o : list) {
-                if (o != null) {
-                    String s = Objects.toString(o);
-                    try {
-                        BigDecimal dec = new BigDecimal(s);
-                        int compareMin = minInclusive == Boolean.TRUE ? 0 : 1;
-                        if (min != null && dec.compareTo(min) < compareMin) {
-                            return new ComponentValue(getKey(), list, 
-                                    FormError.MIN_VALUE, dec.toPlainString());
-                        }
-                        int compareMax = maxInclusive == Boolean.TRUE ? 0 : -1;
-                        if (max != null && dec.compareTo(max) > compareMax) {
-                            return new ComponentValue(getKey(), list, 
-                                    FormError.MAX_VALUE, dec.toPlainString());
-                        }
-                    } catch (NumberFormatException e) {
+            for (BigDecimal dec : list) {
+                if (dec != null) {
+                    int compareMin = minInclusive == Boolean.TRUE ? 0 : 1;
+                    if (min != null && dec.compareTo(min) < compareMin) {
                         return new ComponentValue(getKey(), list, 
-                                    FormError.NUMBER_FORMAT, s);
+                                FormError.MIN_VALUE, dec.toPlainString());
+                    }
+                    int compareMax = maxInclusive == Boolean.TRUE ? 0 : -1;
+                    if (max != null && dec.compareTo(max) > compareMax) {
+                        return new ComponentValue(getKey(), list, 
+                                FormError.MAX_VALUE, dec.toPlainString());
                     }
                 }
             }
         }
         return super.innerValidate(list);
+    }
+
+    @Override
+    public BigDecimal convert(String s) throws ParseException {
+        try {
+            return s == null ? null : new BigDecimal(s);
+        } catch (NumberFormatException e) {
+            throw new ParseException(e.getMessage(), 0);
+        }
     }
 }

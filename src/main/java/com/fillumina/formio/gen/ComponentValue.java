@@ -10,7 +10,7 @@ import java.util.Locale;
 public class ComponentValue {
     
     private final String key;
-    private final List<Object> values;
+    private final List<?> values;
     private final FormError error;
     private final Object[] validation;
 
@@ -21,14 +21,14 @@ public class ComponentValue {
         this.validation = null;
     }
 
-    public ComponentValue(String key, List<Object> values) {
+    public ComponentValue(String key, List<?> values) {
         this.key = key;
         this.values = values;
         this.error = null;
         this.validation = null;
     }
 
-    public ComponentValue(String key, List<Object> values, FormError error, Object... validation) {
+    public ComponentValue(String key, List<?> values, FormError error, Object... validation) {
         this.key = key;
         this.values = values;
         this.error = error;
@@ -43,7 +43,7 @@ public class ComponentValue {
         return key;
     }
 
-    public List<Object> getValues() {
+    public List<?> getValues() {
         return values;
     }
 

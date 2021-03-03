@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -20,8 +21,8 @@ import org.json.JSONObject;
 public class Form {
     
     private final JSONObject json;
-    private final Map<String, Component<?>> allComponents;
-    private final Map<String, Component<?>> components;
+    private final Map<String, Component<?,?>> allComponents;
+    private final Map<String, Component<?,?>> components;
 
     /**
      * @see https://github.com/formio/formio.js/wiki/Form-JSON-Schema
@@ -38,9 +39,10 @@ public class Form {
         allComponents = new LinkedHashMap<>();
     }
     
-    public Form addComponent(Component<?> component) {
-        components.put(component.getKey(), component);
-        allComponents.put(component.getKey(), component);
+    public Form addComponent(Component<?,?> component) {
+        final String key = component.getKey();
+        components.put(key, component);
+        allComponents.put(key, component);
         if (component instanceof Container) {
             ((Container)component).addComponents(allComponents);
         }
@@ -63,11 +65,22 @@ public class Form {
         Map<String,ComponentValue> responseMap = new LinkedHashMap<>();
         
         JSONObject data = jsonObject.getJSONObject("data");
-        for (Entry<String, Component<?>> entry : allComponents.entrySet()) {
+        for (Entry<String, Component<?,?>> entry : allComponents.entrySet()) {
             String key = entry.getKey();
-            Component<?> component = entry.getValue();
+            Component<?,?> component = entry.getValue();
             
-            Object value = data.get(key);
+            Object value;
+            try {
+                value = data.get(key);
+            } catch (JSONException ex) {
+                if (component.isRequired() && component.isValue()) {
+                    errorPresent = true;
+                    ComponentValue response = new ComponentValue(key, null, 
+                            FormError.MISSING, key);
+                    responseMap.put(key, response);
+                }
+                continue;
+            }
             ComponentValue response = component.validate(value);
             if (response.isErrorPresent()) {
                 errorPresent = true;

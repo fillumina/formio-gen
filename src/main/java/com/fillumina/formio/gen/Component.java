@@ -1,5 +1,6 @@
 package com.fillumina.formio.gen;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +12,7 @@ import org.json.JSONObject;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public abstract class Component<T extends Component<T>> {
+public abstract class Component<T extends Component<T,V>,V> {
 
     private final String key;
     protected final JSONObject json;
@@ -38,13 +39,28 @@ public abstract class Component<T extends Component<T>> {
         multiple(false);
     }
 
+    public abstract V convert(String s) throws ParseException;
+    
+    protected boolean isRequired() {
+        return required == Boolean.TRUE;
+    }
+    
+    protected boolean isValue() {
+        return true;
+    }
+    
     /**
      * 
      * @param errors adds errors to this
      * @param value might be a single value or an array of values
      */
     public ComponentValue validate(Object value) {
-        List<Object> list = toList(value);
+        List<V> list;
+        try {
+            list = toList(value);
+        } catch (ParseException e) {
+            return new ComponentValue(key, List.of(e.getMessage()), FormError.PARSE_EXCEPTION);
+        }
         if ((required == Boolean.TRUE || (minLength != null && minLength > 0)) && 
                 (list == null || list.stream().anyMatch(o -> o == null)) ) {
             return new ComponentValue(key, list, FormError.NULL_VALUE);
@@ -77,23 +93,28 @@ public abstract class Component<T extends Component<T>> {
      * Called <i>after</i> basic validation has been performed.
      * Overwrite this method to do further validations and/or call super to report no error result.
      */
-    protected ComponentValue innerValidate(List<Object> list) {
+    protected ComponentValue innerValidate(List<V> list) {
         // return no error result
         return new ComponentValue(key, list);
     }
 
-    private List<Object> toList(Object value) {
+    private List<V> toList(Object value) throws ParseException {
         if (value == null) {
             return null;
         }
         if (value instanceof JSONArray) {
-            List<Object> list = new ArrayList<>();
+            List<V> list = new ArrayList<>();
             for(Object o: (JSONArray) value) {
-                list.add(o);
+                if (o == null) {
+                    list.add(null);
+                } else {
+                    list.add(convert(Objects.toString(o)));
+                }
             }            
             return list;
         }
-        return List.of(value);
+        V convert = convert(Objects.toString(value));
+        return convert == null ? null : List.of(convert);
     }
     
     public String getKey() {

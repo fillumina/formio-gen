@@ -4,7 +4,7 @@ package com.fillumina.formio.gen;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class TextAreaComponent extends Component<TextAreaComponent> {
+public class TextAreaComponent extends StringComponent<TextAreaComponent> {
 
     public TextAreaComponent(String key) {
         super("textarea", key);

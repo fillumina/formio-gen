@@ -63,7 +63,7 @@ public class ColumnsContainer extends Container<ColumnsContainer> {
             return this;
         }
         
-        public ColContainer addComponent(Component<?> component) {
+        public ColContainer addComponent(Component<?,?> component) {
             components.put(component.toJSONObject());
             ColumnsContainer.this.addComponent(component);
             return this;

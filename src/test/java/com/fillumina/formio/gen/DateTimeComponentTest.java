@@ -21,35 +21,28 @@ public class DateTimeComponentTest {
         String nowAsISO = getNowAsISOString(0);
 
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        comp.format(DateTimeComponent.ISO8601);
         ComponentValue cv = comp.validate(nowAsISO);
         assertFalse(cv.isErrorPresent());
     }
 
     @Test
     public void shouldAcceptDefaultValue() throws ParseException {
-        Date nowAsDefault = convert("2021-03-03 10:48 AM", DateTimeComponent.DEFAULT_FORMAT);
-
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        ComponentValue cv = comp.validate(nowAsDefault);
+        ComponentValue cv = comp.validate("2021-03-11T00:00:00+01:00");
         assertFalse(cv.isErrorPresent());
     }
 
     @Test
     public void shouldRejectBadFormat() {
-        String nowAsISO = getNowAsISOString(0);
-
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        comp.format(DateTimeComponent.ISO8601);
         ComponentValue cv = comp.validate("12-03-2010");
-        assertEquals(FormError.DATE_FORMAT, cv.getError());
+        assertEquals(FormError.PARSE_EXCEPTION, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
 
     @Test
     public void shouldRejectBeforeMin() {
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        comp.format(DateTimeComponent.ISO8601);
         comp.minDate(getNowAsDate(-3));
         ComponentValue cv = comp.validate(getNowAsISOString(-10));
         assertEquals(FormError.DATE_BEFORE_MIN, cv.getError());
@@ -59,7 +52,6 @@ public class DateTimeComponentTest {
     @Test
     public void shouldRejectAfterMax() {
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        comp.format(DateTimeComponent.ISO8601);
         comp.maxDate(getNowAsDate(3));
         ComponentValue cv = comp.validate(getNowAsISOString(10));
         assertEquals(FormError.DATE_AFTER_MAX, cv.getError());
@@ -69,7 +61,6 @@ public class DateTimeComponentTest {
     @Test
     public void shouldAcceptInBetweenDate() {
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        comp.format(DateTimeComponent.ISO8601);
         comp.minDate(getNowAsDate(-3));
         comp.maxDate(getNowAsDate(3));
         ComponentValue cv = comp.validate(getNowAsISOString(0));

@@ -15,7 +15,7 @@ public class IntegerComponentTest {
     public void shouldRejectValue() {
         IntegerComponent comp = new IntegerComponent("int123");
         ComponentValue cv = comp.validate("12.34");
-        assertEquals(FormError.NUMBER_FORMAT, cv.getError());
+        assertEquals(FormError.PARSE_EXCEPTION, cv.getError());
         assertTrue(cv.isErrorPresent());
     }    
             
