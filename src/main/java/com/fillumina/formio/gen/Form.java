@@ -18,6 +18,7 @@ import org.json.JSONObject;
  * 
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
+// TODO insert data management containers (datagrid and datamap)
 public class Form {
     
     private final JSONObject json;
@@ -44,7 +45,7 @@ public class Form {
         components.put(key, component);
         allComponents.put(key, component);
         if (component instanceof Container) {
-            ((Container)component).addComponents(allComponents);
+            ((Container)component).addComponentsToMap(allComponents);
         }
         return this;
     }

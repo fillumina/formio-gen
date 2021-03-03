@@ -10,17 +10,17 @@ import org.json.JSONArray;
  */
 public class TableContainer extends Container<TableContainer> {
     
-    private final JSONArray table;
+    private final JSONArray tableRows;
     
     public TableContainer(String key, int rows, int cols) {
         super("table", key);
         json.put("numRows", rows);
         json.put("numCols", cols);
-        
-        table = new JSONArray();
+        tableRows = new JSONArray();
+        json.put("rows", tableRows);
         for (int row=0; row<rows; row++) {
             JSONArray rowArray = new JSONArray();
-            table.put(rowArray);
+            tableRows.put(rowArray);
             for (int col=0; col<cols; col++) {
                 JSONArray colArray = new JSONArray();
                 rowArray.put(colArray);
@@ -29,8 +29,9 @@ public class TableContainer extends Container<TableContainer> {
     }
 
     public TableContainer addComponentRowCol(int row, int col, Component component) {
-        ((JSONArray)((JSONArray) table.get(row)).get(col)).put(component);
-        super.addComponent(component);
+        ((JSONArray)((JSONArray) tableRows.get(row)).get(col))
+                .put(component.toJSONObject());
+        super.addValidatingComponent(component);
         return this;
     }
     

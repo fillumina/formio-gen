@@ -10,9 +10,9 @@ import org.owasp.html.PolicyFactory;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class StringComponent<T extends Component<T, String>> extends Component<T, String> {
-
-    //private static final PolicyFactory POLICY = Sanitizers.FORMATTING;
-    private static final PolicyFactory POLICY = new HtmlPolicyBuilder()
+    
+    //https://github.com/OWASP/java-html-sanitizer#prepackaged-policies
+    private static final PolicyFactory FORBID_ALL_TAGS = new HtmlPolicyBuilder()
             .allowElements()
             .allowUrlProtocols()
             .allowAttributes().onElements()
@@ -26,6 +26,6 @@ public class StringComponent<T extends Component<T, String>> extends Component<T
     @Override
     public String convert(String txt) throws ParseException {
         // clean text from all dangerous code.
-        return POLICY.sanitize(txt);
+        return FORBID_ALL_TAGS.sanitize(txt);
     }
 }

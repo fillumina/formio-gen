@@ -23,4 +23,11 @@ public class StringComponentTest {
         String healed = str.convert("Hello <b>Word</b>!");
         assertEquals("Hello Word!", healed);
     }
+    
+    @Test
+    public void shouldConvertEntities() throws ParseException {
+        StringComponent str = new StringComponent("text", "str123");
+        String healed = str.convert("Cio&egrave;");
+        assertEquals("Cioè", healed);
+    }
 }

@@ -60,4 +60,19 @@ public class Metadata {
     public boolean isOnline() {
         return online;
     }
+
+    @Override
+    public String toString() {
+        return "Metadata:" + 
+                "\n timezone=" + timezone + 
+                "\n offset=" + offset + 
+                "\n origin=" + origin + 
+                "\n referrer=" + referrer + 
+                "\n browserName=" + browserName + 
+                "\n userAgent=" + userAgent + 
+                "\n pathName=" + pathName + 
+                "\n online=" + online;
+    }
+
+    
 }

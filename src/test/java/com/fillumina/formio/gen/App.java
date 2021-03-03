@@ -28,7 +28,7 @@ public class App {
     
     private void validateJsonResponse(Form form, String response) {
         FormResponse formResponse = form.validateJson(response);
-        System.out.println("END");
+        System.out.println(formResponse);
     }
 
     private Form createForm() {

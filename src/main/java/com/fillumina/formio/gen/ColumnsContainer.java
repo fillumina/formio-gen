@@ -10,7 +10,6 @@ import org.json.JSONObject;
 public class ColumnsContainer extends Container<ColumnsContainer> {
     
     private JSONArray columns;
-    private ColContainer[] columnArray;
     
     public ColumnsContainer(String key) {
         super("columns", key);
@@ -65,7 +64,7 @@ public class ColumnsContainer extends Container<ColumnsContainer> {
         
         public ColContainer addComponent(Component<?,?> component) {
             components.put(component.toJSONObject());
-            ColumnsContainer.this.addComponent(component);
+            ColumnsContainer.this.addValidatingComponent(component);
             return this;
         }
         

@@ -4,7 +4,7 @@ package com.fillumina.formio.gen;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class PanelContainer extends Container<PanelContainer> {
+public class PanelContainer extends ArrayContainer<PanelContainer> {
     
     public PanelContainer(String key) {
         super("panel", key); // checkout panel also

@@ -13,7 +13,7 @@ import org.owasp.html.Sanitizers;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class WysiwygComponent extends TextAreaComponent {
-
+    // https://github.com/OWASP/java-html-sanitizer#prepackaged-policies
     private static final PolicyFactory POLICY = Sanitizers.FORMATTING
             .and(Sanitizers.BLOCKS);
     

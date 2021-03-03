@@ -138,6 +138,11 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
+    /** Use to add undescribed or not available options to the Component. */
+    public T addOption(String name, Object value) {
+        json.put(name, value);
+        return (T) this;
+    }
     
     public T tabIndex(int tabIndex) {
         json.put("tabindex", tabIndex);
@@ -200,6 +205,16 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
+    public T tooltip(String tooltip) {
+        validate.put("tooltip", tooltip);
+        return (T) this;
+    }
+
+    public T description(String description) {
+        validate.put("description", description);
+        return (T) this;
+    }
+
     public T maxLength(int maxLength) {
         this.maxLength = maxLength;
         validate.put("maxLength", maxLength);
@@ -258,7 +273,7 @@ public abstract class Component<T extends Component<T,V>,V> {
                          .append(multipleMin)
                          .append(" and ")
                          .append(multipleMax)
-                         .append("' fields;");
+                         .append(" fields';");
             } else if (multipleMin != null) {
                  buf.append("'there should be at least ")
                          .append(multipleMin)
