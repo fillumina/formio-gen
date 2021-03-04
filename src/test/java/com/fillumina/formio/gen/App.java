@@ -13,7 +13,7 @@ public class App {
 
     public static void main(String[] args) {
         Form form = INSTANCE.createForm();
-        String html = HtmlGenerator.generateHtml(form.toJSONObject());
+        String html = HtmlGenerator.generateHtml(form.toJSONObject(), "form_post");
 
         new WebServer().configure(routes -> routes
                 .get("/", html)
