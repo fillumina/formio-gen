@@ -1,0 +1,19 @@
+it: {
+  alertMessage: '{{message}}',
+  error : "Occorre correggere i seguenti errori prima di inviare.",
+  invalid_date :"{{field}} non è una data valida.",
+  invalid_email : "{{field}} non è una valida email.",
+  invalid_regex : "{{field}} non corrisponde al pattern {{regex}}.",
+  mask : "{{field}} non corrisponde alla maschera richiesta.",
+  max : "{{field}} non può essere più grande di {{max}}.",
+  maxLength : "{{field}} deve essere più corto di {{length}} caratteri.",
+  min : "{{field}} non può essere meno di {{min}}.",
+  minLength : "{{field}} deve essere più lungo di {{length}} caratteri.",
+  next : "Prossimo",
+  pattern : "{{field}} non corrisponde al pattern {{pattern}}",
+  previous : "Precedente",
+  required : "{{field}} è obbligatorio.",
+  submitError : "Ci sono errori da correggere, impossibile inviare il form.",
+  complete: "L'invio è stato eseguito correttamente.",
+  multiplicity: "{{field}} numero di campi non valido."
+}

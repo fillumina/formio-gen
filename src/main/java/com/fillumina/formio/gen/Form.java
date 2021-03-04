@@ -16,6 +16,10 @@ import org.json.JSONObject;
  * @see https://formio.github.io/formio.js/docs/class/src/components/Components.js~Components.html
  * @see https://github.com/formio/formio.js/wiki/Form-JSON-Schema
  * 
+ * // angular
+ * @see https://github.com/formio/angular/wiki/Translations
+ * @see https://stackoverflow.com/questions/60667350/angular-formio-set-language-in-formbuilder
+ * 
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 // TODO insert data management containers (datagrid and datamap)

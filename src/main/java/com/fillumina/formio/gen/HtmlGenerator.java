@@ -1,5 +1,10 @@
 package com.fillumina.formio.gen;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.json.JSONObject;
 
 /**
@@ -16,20 +21,20 @@ public class HtmlGenerator {
             "  <link rel=\"stylesheet\" href=\"https://cdn.form.io/formiojs/formio.full.min.css\">\n" +
             "  <script src=\"https://cdn.form.io/formiojs/formio.full.min.js\"></script>\n" +
             "    <script type='text/javascript'>\n" +
-            "      var global_data = {};\n" +
             "      window.onload = function() {\n" +
             "        Formio.icons = 'fontawesome';\n" +
             "        Formio.createForm(document.getElementById('formio'),\n";
 
-    private static final String JSON_END = ")\n";
 
+    private static final String LANGUAGES_END = "  }\n";
+    
     private static final String FORM =
-            ".then(function(form) {\n" +
+            "}).then(function(form) {\n" +
             "  // Defaults are provided as follows.\n" +
             "  form.submission = {\n" +
             "    data: {\n" +
-//            "      firstName: 'Joe',\n" +
-//            "      lastName: 'Smith'\n" +
+            //            "      firstName: 'Joe',\n" +
+            //            "      lastName: 'Smith'\n" +
             "    }\n" +
             "  };\n" +
             "  function sendJSON(jsonData) {\n" +
@@ -85,11 +90,29 @@ public class HtmlGenerator {
 
         buf.append(HEADER);
         buf.append(object.toString(4));
-        buf.append(JSON_END);
+        buf.append(generateLanguages("it", "en", "it"));
+        buf.append(LANGUAGES_END);
         buf.append(FORM);
         buf.append(FOOTER);
 
         return buf.toString();
+    }
+
+    // https://github.com/formio/formio.js/wiki/Translations
+    private static String generateLanguages(String defLang, String... languages) {
+        String header = ", {\n language: '" + defLang + "',\n  i18n: {\n";        
+        
+        List<String> list = new ArrayList<>();
+        for (String lang : languages) {
+            try (InputStream is = HtmlGenerator.class
+                    .getResourceAsStream("/translation_" + lang + ".txt")) {
+                String txt = new String(is.readAllBytes());
+                list.add(txt);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        return header + list.stream().collect(Collectors.joining(",\n"));
     }
 
 }

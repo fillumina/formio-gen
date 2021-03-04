@@ -20,8 +20,8 @@ public abstract class Component<T extends Component<T,V>,V> {
     protected final JSONObject validate;
     private Function<V,Object> externalValidator;
 
-    private Integer multipleMin;
-    private Integer multipleMax;
+    private Integer minItems;
+    private Integer maxItems;
     private Boolean multiple;
     private Boolean required;
     private Integer minLength;
@@ -76,10 +76,10 @@ public abstract class Component<T extends Component<T,V>,V> {
             if (multiple == Boolean.FALSE && list.size() > 1) {
                 return new ComponentValue(key, list, FormError.MULTIPLE_VALUES);
             }
-            if (multipleMin != null && list.size() < multipleMin) {
+            if (minItems != null && list.size() < minItems) {
                 return new ComponentValue(key, list, FormError.MULTIPLE_VALUES_TOO_FEW);
             }
-            if (multipleMax != null && list.size() > multipleMax) {
+            if (maxItems != null && list.size() > maxItems) {
                 return new ComponentValue(key, list, FormError.MULTIPLE_VALUES_TOO_MANY);
             }
             if (minLength != null && list.stream().anyMatch(o -> o.toString().length() < minLength)) {
@@ -185,6 +185,11 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
+    public T tooltip(String tooltip) {
+        json.put("tooltip", tooltip);
+        return (T) this;
+    }
+
     public T placeholder(String placeholder) {
         json.put("placeholder", placeholder);
         return (T) this;
@@ -197,14 +202,16 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
     
-    public T minItems(int multipleMin) {
-        this.multipleMin = multipleMin;
+    public T minItems(int minItems) {
+        this.minItems = minItems;
+        validate.put("minItems", minItems);
         multiple(true);
         return (T) this;
     }
     
-    public T maxItems(int multipleMax) {
-        this.multipleMax = multipleMax;
+    public T maxItems(int maxItems) {
+        this.maxItems = maxItems;
+        validate.put("maxItems", maxItems);
         multiple(true);
         return (T) this;
     }
@@ -218,11 +225,6 @@ public abstract class Component<T extends Component<T,V>,V> {
     public T minLength(int minLength) {
         this.minLength = minLength;
         validate.put("minLength", minLength);
-        return (T) this;
-    }
-
-    public T tooltip(String tooltip) {
-        validate.put("tooltip", tooltip);
         return (T) this;
     }
 
@@ -257,6 +259,24 @@ public abstract class Component<T extends Component<T,V>,V> {
      * <pre>
      * valid = (input === 3) ? true : 'Must be 3';
      * </pre>
+     * 
+     * <a href='https://github.com/formio/formio.js/issues/1867'>
+     * Provided variables:
+     * </a>
+     * <table>
+     * <tr><th>input</th><td>the input value into this component</td></tr>
+     * <tr><th>form</th><td>the complete form JSON object</td></tr>
+     * <tr><th>submission</th><td>the complete submission object</td></tr>
+     * <tr><th>data</th><td>the complete submission data object</td></tr>
+     * <tr><th>row</th><td>contextual 'row' data, used within DataGrid and containers</td></tr>
+     * <tr><th>component</th><td>the current component JSON</td></tr>
+     * <tr><th>instance</th><td>the current component instance</td></tr>
+     * <tr><th>value</th><td>the current value of the component</td></tr>
+     * <tr><th>moment</th><td>the moment.js library for date manipulation</td></tr>
+     * <tr><th>_</th><td>an instance of Lodash</td></tr>
+     * <tr><th>utils</th><td>instance of FormioUtils object</td></tr>
+     * <tr><th>util</th><td>alias for utils</td></tr>
+     * </table>
      *
      * @param custom
      * @return
@@ -267,41 +287,26 @@ public abstract class Component<T extends Component<T,V>,V> {
     }
     
     private void addMultipleValidation() {
-//        custom("valid = true; console.log('HELLO',component);");
-//        if (true) return;
-        if (multipleMin != null || multipleMax != null) {
-            String variable = "global_data['" + key + "']";
+        final boolean minItemsNotNull = minItems != null;
+        final boolean maxItemsNotNull = maxItems != null;
+        if (minItemsNotNull || maxItemsNotNull) {
+            String variable = "data['" + key + "']";
             StringBuilder buf = new StringBuilder();
             buf.append("valid = (");
             buf.append(" Array.isArray(").append(variable).append(") && ");
-            if (multipleMin != null) {
-                buf.append(variable).append(".length >= ").append(multipleMin);
-                if (multipleMax != null) {
+            if (minItemsNotNull) {
+                buf.append(variable).append(".length >= ").append(minItems);
+                if (maxItemsNotNull) {
                     buf.append( " && ");
                 }
             }
-            if (multipleMax != null) {
-                buf.append(variable).append(".length <= ").append(multipleMax);
+            if (maxItemsNotNull) {
+                buf.append(variable).append(".length <= ").append(maxItems);
             }
             buf.append(" ) ? true : ");
-            if (multipleMin != null && multipleMax != null) {
-                 buf.append("'there should be between ")
-                         .append(multipleMin)
-                         .append(" and ")
-                         .append(multipleMax)
-                         .append(" fields';");
-            } else if (multipleMin != null) {
-                 buf.append("'there should be at least ")
-                         .append(multipleMin)
-                         .append(" items';");
-            } else {
-                 buf.append("'there should be at most ")
-                         .append(multipleMax)
-                         .append(" items';");
-            }
+            buf.append("'multiplicity';");
             custom(buf.toString());
         }
-        
     }
     
 }

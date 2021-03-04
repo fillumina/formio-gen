@@ -12,6 +12,12 @@ public class FormResponse {
     private final Map<String,ComponentValue> map;
     private final boolean errorPresent;
 
+    /**
+     * 
+     * @param metadata
+     * @param map value for label
+     * @param errorPresent 
+     */
     public FormResponse(Metadata metadata, Map<String,ComponentValue> map, boolean errorPresent) {
         this.metadata = metadata;
         this.map = map;
@@ -39,6 +45,4 @@ public class FormResponse {
                 metadata + "\nData:\n" +
                 buf.toString();
     }
-    
-    
 }
