@@ -71,7 +71,6 @@ public class HtmlGenerator {
             "  \n" +
             "  // Everytime the form changes, this will fire.\n" +
             "  form.on('change', function(changed) {\n" +
-            "    global_data = changed.data;\n" +
             "    console.log('Form was changed', changed);\n" +
             "  });\n" +
             "});\n" +

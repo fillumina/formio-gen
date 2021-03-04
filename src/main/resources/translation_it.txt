@@ -15,5 +15,5 @@ it: {
   required : "{{field}} è obbligatorio.",
   submitError : "Ci sono errori da correggere, impossibile inviare il form.",
   complete: "L'invio è stato eseguito correttamente.",
-  multiplicity: "{{field}} numero di campi non valido."
+  multiplicity: "{{field}} ha un numero di campi non valido."
 }
