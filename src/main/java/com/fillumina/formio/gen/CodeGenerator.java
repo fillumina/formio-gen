@@ -12,7 +12,8 @@ import org.json.JSONObject;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class HtmlGenerator {
+// TODO https://formio.github.io/formio.js/app/examples/htmlview.html  submission view
+public class CodeGenerator {
 
     private static final String HTML_HEADER =
             "<html>\n" +
@@ -116,7 +117,7 @@ public class HtmlGenerator {
         
         List<String> list = new ArrayList<>();
         for (String lang : languages) {
-            try (InputStream is = HtmlGenerator.class
+            try (InputStream is = CodeGenerator.class
                     .getResourceAsStream("/translation_" + lang + ".txt")) {
                 String txt = new String(is.readAllBytes());
                 list.add(txt);

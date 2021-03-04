@@ -13,7 +13,7 @@ public class App {
 
     public static void main(String[] args) {
         Form form = INSTANCE.createForm();
-        String html = HtmlGenerator.generateHtml(form.toJSONObject(), "form_post");
+        String html = CodeGenerator.generateHtml(form.toJSONObject(), "form_post");
 
         new WebServer().configure(routes -> routes
                 .get("/", html)
@@ -25,7 +25,7 @@ public class App {
                 })
         ).start();
     }
-    
+
     private void validateJsonResponse(Form form, String response) {
         FormResponse formResponse = form.validateJson(response);
         System.out.println(formResponse);
@@ -66,9 +66,11 @@ public class App {
                 .label("Name")
                 .placeholder("Tell your name")
                 .required(true));
-        form.addComponent(new TextAreaComponent("area123")
+        form.addComponent(new WysiwygComponent("area123")
                 .label("Comment")
                 .placeholder("Say something about you")
+                // FIXME not working, it must be an upstream bug
+                .toolbar(TOOLBAR)
                 .rows(5)
                 .required(false));
         form.addComponent(new FieldSetContainer("panel123")
@@ -82,10 +84,52 @@ public class App {
                         .maxLength(20)
                         .minLength(1)));
         form.addComponent(new ColumnsContainer("col123")
-            .createColumn().addComponent(new SubmitComponent().label("Send Form")).endCol()
-            .createColumn().addComponent(new CancelComponent().label("Clear Data")).endCol());
+                .createColumn().addComponent(new SubmitComponent().label("Send Form")).endCol()
+                .createColumn().addComponent(new CancelComponent().label("Clear Data")).endCol());
 //        form.addComponent(new SubmitComponent().label("Send Form"));
 //        form.addComponent(new CancelComponent().label("Clear Data"));
         return form;
     }
+
+    private static final String TOOLBAR =
+            "[['bold', 'italic', 'underline', 'strike']]\n";
+
+    private static final String TOOLBAR_1 =
+            "        [\n" +
+            "          ['bold', 'italic', 'underline', 'strike'],\n" +
+            "          ['blockquote', 'code-block'],\n" +
+            "\n" +
+            "          [{ 'list': 'ordered'}, { 'list': 'bullet' }],\n" +
+            "          [{ 'indent': '-1'}, { 'indent': '+1' }],\n" +
+            "          [{ 'direction': 'rtl' }],\n" +
+            "\n" +
+            "          [{ 'size': ['small', false, 'large', 'huge'] }],\n" +
+            "\n" +
+            "          [{ 'color': [] }, { 'background': [] }],\n" +
+            "          [{ 'font': [] }],\n" +
+            "          [{ 'align': [] }],\n" +
+            "\n" +
+            "          ['clean']\n" +
+            "        ]";
+
+    private static final String TOOLBAR_OK =
+            "        [\n" +
+            "          ['bold', 'italic', 'underline', 'strike'],\n" +
+            "          ['blockquote', 'code-block'],\n" +
+            "\n" +
+            "          [{ 'header': 1 }, { 'header': 2 }],\n" +
+            "          [{ 'list': 'ordered'}, { 'list': 'bullet' }],\n" +
+            "          [{ 'script': 'sub'}, { 'script': 'super' }],\n" +
+            "          [{ 'indent': '-1'}, { 'indent': '+1' }],\n" +
+            "          [{ 'direction': 'rtl' }],\n" +
+            "\n" +
+            "          [{ 'size': ['small', false, 'large', 'huge'] }],\n" +
+            "          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],\n" +
+            "\n" +
+            "          [{ 'color': [] }, { 'background': [] }],\n" +
+            "          [{ 'font': [] }],\n" +
+            "          [{ 'align': [] }],\n" +
+            "\n" +
+            "          ['clean']\n" +
+            "        ]";
 }
