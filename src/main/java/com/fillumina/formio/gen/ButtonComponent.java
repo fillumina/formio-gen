@@ -1,12 +1,10 @@
 package com.fillumina.formio.gen;
 
-import java.text.ParseException;
-
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class ButtonComponent extends Component<ButtonComponent,Void> {
+public class ButtonComponent<T extends ButtonComponent<T>> extends AbstractNonValueComponent<T> {
 
     public ButtonComponent(String action) {
         super("button", action);
@@ -31,10 +29,5 @@ public class ButtonComponent extends Component<ButtonComponent,Void> {
     public ButtonComponent size(String size) {
         json.put("size", size);
         return this;
-    }
-
-    @Override
-    public Void convert(Object s) throws ParseException {
-        return null;
     }
 }

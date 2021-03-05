@@ -8,6 +8,8 @@ import org.json.JSONObject;
  */
 public class Metadata {
     
+    public static final Metadata EMPTY = new Metadata();
+    
     private final String timezone;
     private final Integer offset;
     private final String origin;
@@ -16,6 +18,17 @@ public class Metadata {
     private final String userAgent;
     private final String pathName;
     private final Boolean online;
+
+    private Metadata() {
+        timezone = null;
+        offset = null;
+        origin = null;
+        referrer = null;
+        browserName = null;
+        userAgent = null;
+        pathName = null;
+        online = null;
+    }
 
     public Metadata(JSONObject json) {
         JSONObject metadata = json.getJSONObject("metadata");

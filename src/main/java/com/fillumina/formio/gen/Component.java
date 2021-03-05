@@ -57,47 +57,55 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
     
+    /** @return true if doesn't accept multiple values. */
+    public boolean isSingleton() {
+        return multiple == Boolean.FALSE || multiple == null || 
+                (maxItems != null && maxItems == 1);
+    }
+    
     /**
      * 
-     * @param errors adds errors to this
-     * @param value might be a single value or an array of values
+     * @param value can be a java object (like BigDecimal or String) or a JSONArray
+     * @return 
      */
     public ResponseValue validate(Object value) {
         List<V> list;
+        final boolean singleton = isSingleton();
         try {
             list = toList(value);
         } catch (ParseException e) {
-            return new ResponseValue(key, List.of(e.getMessage()), FormError.PARSE_EXCEPTION);
+            return new ResponseValue(key, List.of(e.getMessage()), singleton,
+                    FormError.PARSE_EXCEPTION);
         }
         if ((required == Boolean.TRUE || (minLength != null && minLength > 0)) && 
                 (list == null || list.stream().anyMatch(o -> o == null)) ) {
-            return new ResponseValue(key, list, FormError.NULL_VALUE);
+            return new ResponseValue(key, list, singleton, FormError.NULL_VALUE);
         }
         if (list != null) {
             if (multiple == Boolean.FALSE && list.size() > 1) {
-                return new ResponseValue(key, list, FormError.MULTIPLE_VALUES);
+                return new ResponseValue(key, list, singleton, FormError.MULTIPLE_VALUES);
             }
             if (minItems != null && list.size() < minItems) {
-                return new ResponseValue(key, list, FormError.MULTIPLE_VALUES_TOO_FEW);
+                return new ResponseValue(key, list, singleton, FormError.MULTIPLE_VALUES_TOO_FEW);
             }
             if (maxItems != null && list.size() > maxItems) {
-                return new ResponseValue(key, list, FormError.MULTIPLE_VALUES_TOO_MANY);
+                return new ResponseValue(key, list, singleton, FormError.MULTIPLE_VALUES_TOO_MANY);
             }
             if (minLength != null && list.stream().anyMatch(o -> o.toString().length() < minLength)) {
-                return new ResponseValue(key, list, FormError.LENGTH_TOO_SHORT);
+                return new ResponseValue(key, list, singleton, FormError.LENGTH_TOO_SHORT);
             }
             if (maxLength != null && list.stream().anyMatch(o -> o.toString().length() > maxLength)) {
-                return new ResponseValue(key, list, FormError.LENGTH_TOO_LONG);
+                return new ResponseValue(key, list, singleton, FormError.LENGTH_TOO_LONG);
             }
             if (pattern != null && 
                     list.stream().anyMatch(o -> !pattern.matcher(o.toString()).matches() ) ) {
-                return new ResponseValue(key, list, FormError.PATTERN_NOT_MATCHING);
+                return new ResponseValue(key, list, singleton, FormError.PATTERN_NOT_MATCHING);
             }
             if (externalValidator != null) {
                 for (V v : list) {
                     Object error = externalValidator.apply(v);
                     if (error != null) {
-                        return new ResponseValue(key, list, 
+                        return new ResponseValue(key, list, singleton,
                                 FormError.EXTERNAL_VALIDATOR, error.toString());
                     }
                 }
@@ -112,7 +120,7 @@ public abstract class Component<T extends Component<T,V>,V> {
      */
     protected ResponseValue innerValidate(List<V> list) {
         // return no error result
-        return new ResponseValue(key, list);
+        return new ResponseValue(key, list, isSingleton());
     }
 
     private List<V> toList(Object value) throws ParseException {

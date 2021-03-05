@@ -1,18 +1,17 @@
 package com.fillumina.formio.gen;
 
 import java.text.ParseException;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.List;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * @see https://github.com/formio/formio.js/wiki/DateTime-Component
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class DateTimeComponent extends Component<DateTimeComponent, Date> {
+public class DateTimeComponent extends Component<DateTimeComponent, XMLGregorianCalendar> {
 
     public static enum DateType {
         day, year, week, month
@@ -27,35 +26,50 @@ public class DateTimeComponent extends Component<DateTimeComponent, Date> {
 
     //https://stackoverflow.com/a/60214805/203204
     @Override
-    public Date convert(Object obj) throws ParseException {
+    public XMLGregorianCalendar convert(Object obj) throws ParseException {
         if (obj == null) {
             return null;
         }
-        if (obj instanceof Date) {
-            return (Date) obj;
-        }
+        final String str = obj.toString();
         try {
-            String str = obj.toString();
-            TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(str);
-            Instant i = Instant.from(ta);
-            Date d = Date.from(i);
-            return d;
-        } catch (DateTimeParseException ex) {
-            throw new ParseException(ex.getParsedString(), 0);
+            return toXmlGregorianCalendar(str);
+        } catch (DatatypeConfigurationException ex) {
+//            // it's ok
+//        }
+//        try {
+//            String str = obj.toString();
+//            TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(str);
+//            Instant i = Instant.from(ta);
+//            Date d = Date.from(i);
+//            return d;
+//        } catch (DateTimeParseException ex) {
+            throw new ParseException(str, 0);
         }
     }
 
+    private XMLGregorianCalendar toXmlGregorianCalendar(final Object obj)
+            throws DatatypeConfigurationException {
+        XMLGregorianCalendar xmlGregorianCalendar =
+                DatatypeFactory.newInstance().newXMLGregorianCalendar(obj.toString());
+        return xmlGregorianCalendar;
+    }
+
+    private Date toDate(XMLGregorianCalendar cal) {
+        return cal.toGregorianCalendar().getTime();
+    }
+
     @Override
-    protected ResponseValue innerValidate(List<Date> list) {
+    protected ResponseValue innerValidate(List<XMLGregorianCalendar> list) {
         if (list != null) {
-            for (Date date : list) {
+            for (XMLGregorianCalendar cal : list) {
+                Date date = toDate(cal);
                 if (date != null) {
                     if (minDate != null && date.before(minDate)) {
-                        return new ResponseValue(getKey(), list,
+                        return new ResponseValue(getKey(), list, isSingleton(),
                                 FormError.DATE_BEFORE_MIN);
                     }
                     if (maxDate != null && date.after(maxDate)) {
-                        return new ResponseValue(getKey(), list,
+                        return new ResponseValue(getKey(), list, isSingleton(),
                                 FormError.DATE_AFTER_MAX);
                     }
                 }

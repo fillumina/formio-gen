@@ -46,11 +46,11 @@ public class IntegerComponent extends Component<IntegerComponent, BigInteger> {
     protected ResponseValue innerValidate(List<BigInteger> list) {
         for (BigInteger integer : list) {
             if (min != null && integer.compareTo(min) <= -1) {
-                return new ResponseValue(getKey(), list,
+                return new ResponseValue(getKey(), list, isSingleton(),
                         FormError.MIN_VALUE, integer.toString());
             }
             if (max != null && integer.compareTo(max) >= 1) {
-                return new ResponseValue(getKey(), list,
+                return new ResponseValue(getKey(), list, isSingleton(),
                         FormError.MAX_VALUE, integer.toString());
             }
         }

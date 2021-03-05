@@ -38,8 +38,13 @@ public class App {
     }
 
     private void validateJsonResponse(Form form, String response) {
-        FormResponse formResponse = form.validateJson(response);
+        FormResponse formResponse = form.validateJsonFromFormio(response);
         System.out.println(formResponse);
+        System.out.println("");
+        FormResponse secondValidation = form.validateJson(formResponse.getJsonObject().toString());
+        System.out.println(secondValidation);
+        System.out.println("");
+        System.out.println((formResponse.equals(secondValidation) ? "" : "NOT ") + "EQUALS");
     }
 
     private Form createForm() {

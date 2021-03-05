@@ -28,7 +28,7 @@ public class EnumComponent extends StringComponent<EnumComponent> {
     protected ResponseValue innerValidate(List<String> list) {
         for (String s : list) {
             if (!validValues.contains(s)) {
-                return new ResponseValue(getKey(), list, 
+                return new ResponseValue(getKey(), list, isSingleton(), 
                         FormError.ENUM_ITEM_NOT_PRESENT, s);
             }
         }

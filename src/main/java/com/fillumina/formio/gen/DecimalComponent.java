@@ -61,12 +61,12 @@ public class DecimalComponent extends Component<DecimalComponent,BigDecimal> {
                 if (dec != null) {
                     int compareMin = minInclusive == Boolean.TRUE ? 0 : 1;
                     if (min != null && dec.compareTo(min) < compareMin) {
-                        return new ResponseValue(getKey(), list, 
+                        return new ResponseValue(getKey(), list, isSingleton(),
                                 FormError.MIN_VALUE, dec.toPlainString());
                     }
                     int compareMax = maxInclusive == Boolean.TRUE ? 0 : -1;
                     if (max != null && dec.compareTo(max) > compareMax) {
-                        return new ResponseValue(getKey(), list, 
+                        return new ResponseValue(getKey(), list, isSingleton(), 
                                 FormError.MAX_VALUE, dec.toPlainString());
                     }
                 }

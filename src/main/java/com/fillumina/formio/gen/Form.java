@@ -48,7 +48,9 @@ public class Form {
         for (Component<?,?> component : componentArray) {
             final String key = component.getKey();
             components.put(key, component);
-            allComponents.put(key, component);
+            if (component.isValue()) {
+                allComponents.put(key, component);
+            }
             if (component instanceof Container) {
                 ((Container)component).addComponentsToMap(allComponents);
             }
@@ -56,33 +58,28 @@ public class Form {
         return this;
     }
     
-    /**
-     * 
-     * @param errors   list of errors returned (key, error)
-     * @param jsonText json text to parse
-     * @return the json object (check for errors before accepting it)
-     */
+    /** Validates a json string against the rules specified in this form. */
     public FormResponse validateJson(String jsonText) {
-        JSONObject jsonObject = new JSONObject(jsonText);
-
-        Metadata metadata = new Metadata(jsonObject);
-        
+        JSONObject json = new JSONObject(jsonText);
+        return validateJson(json);
+    }
+    
+    public FormResponse validateJson(JSONObject json) {
         boolean errorPresent = false;
-        
         Map<String,ResponseValue> responseMap = new LinkedHashMap<>();
-        
-        JSONObject data = jsonObject.getJSONObject("data");
+
         for (Entry<String, Component<?,?>> entry : allComponents.entrySet()) {
             String key = entry.getKey();
             Component<?,?> component = entry.getValue();
             
             Object value;
             try {
-                value = data.get(key);
+                value = json.get(key);
             } catch (JSONException ex) {
                 if (component.isValue() && component.isRequired()) {
                     errorPresent = true;
                     ResponseValue response = new ResponseValue(key, null, 
+                            component.isSingleton(),
                             FormError.MISSING, key);
                     responseMap.put(key, response);
                 }
@@ -95,7 +92,22 @@ public class Form {
             responseMap.put(key, response);
         }
         
-        return new FormResponse(data, metadata, responseMap, errorPresent);
+        return new FormResponse(Metadata.EMPTY, responseMap, errorPresent);
+    }
+    
+    /**
+     * Validates the json string returned by formio.
+     * 
+     * @param errors   list of errors returned (key, error)
+     * @param jsonText json text to parse
+     * @return the json object (check for errors before accepting it)
+     */
+    public FormResponse validateJsonFromFormio(String jsonText) {
+        JSONObject jsonObject = new JSONObject(jsonText);
+        JSONObject data = jsonObject.getJSONObject("data");
+        Metadata metadata = new Metadata(jsonObject);
+        FormResponse response = validateJson(data);
+        return response.withMetadata(metadata);
     }
     
     public JSONObject toJSONObject() {

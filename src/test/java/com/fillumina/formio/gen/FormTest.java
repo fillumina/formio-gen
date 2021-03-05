@@ -41,7 +41,7 @@ public class FormTest {
         form.addComponent(new TextFieldComponent(id).required(true));
 
         // missing data content
-        FormResponse response = form.validateJson(JSON_HEADER + JSON_FOOTER);
+        FormResponse response = form.validateJsonFromFormio(JSON_HEADER + JSON_FOOTER);
         assertTrue(response.isErrorPresent());
         
         ResponseValue componentResponse = response.getMap().get(id);
@@ -56,7 +56,7 @@ public class FormTest {
 
         String content = "hello world";
         String jsonContent = "\"txt123\":\"" + content + "\"";
-        FormResponse response = form.validateJson(JSON_HEADER + jsonContent + JSON_FOOTER);
+        FormResponse response = form.validateJsonFromFormio(JSON_HEADER + jsonContent + JSON_FOOTER);
         assertFalse(response.isErrorPresent());
         
         ResponseValue componentResponse = response.getMap().get(id);
@@ -73,7 +73,7 @@ public class FormTest {
 
         String content = "[\"hello world\",\"this is me\"]";
         String jsonContent = "\"txt123\":" + content;
-        FormResponse response = form.validateJson(JSON_HEADER + jsonContent + JSON_FOOTER);
+        FormResponse response = form.validateJsonFromFormio(JSON_HEADER + jsonContent + JSON_FOOTER);
         assertFalse(response.isErrorPresent());
         
         ResponseValue componentResponse = response.getMap().get(id);
