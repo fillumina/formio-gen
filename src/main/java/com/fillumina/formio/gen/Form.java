@@ -97,7 +97,7 @@ public class Form {
      */
     public JSONObject toFormioJSONObject() {
         // conservative cloning the object
-        return new JSONObject(json);
+        return cloneJSONObject(json);
     }
 
     /**
