@@ -35,7 +35,7 @@ public abstract class Component<T extends Component<T,V>,V> {
         json.put("tableView", false);
         json.put("input", true);
         json.put("key", key);
-        json.put("persistent", true); // don't know exactly
+        //json.put("persistent", true); // don't know exactly
         json.put("path", "clothing");
         multiple(false);
     }
@@ -175,17 +175,29 @@ public abstract class Component<T extends Component<T,V>,V> {
     }
 
     public T tableView(boolean tableView) {
-        json.put("tableView", tableView);
+        if (tableView == true) {
+            json.put("tableView", tableView);
+        } else {
+            json.remove("tableView");
+        }
         return (T) this;
     }
 
     public T theme(Theme theme) {
-        json.put("theme", theme.toString());
+        if (theme != null) {
+            json.put("theme", theme.toString());
+        } else {
+            json.remove("theme");
+        }
         return (T) this;
     }
 
     public T theme(String theme) {
-        json.put("theme", theme);
+        if (theme != null) {
+            json.put("theme", theme);
+        } else {
+            json.remove("theme");
+        }
         return (T) this;
     }
 
@@ -207,7 +219,11 @@ public abstract class Component<T extends Component<T,V>,V> {
     /** Unlimited */
     public T multiple(boolean multiple) {
         this.multiple = multiple;
-        json.put("multiple", multiple);
+        if (multiple) {
+            json.put("multiple", multiple);
+        } else {
+            json.remove("multiple");
+        }
         return (T) this;
     }
 
@@ -227,7 +243,11 @@ public abstract class Component<T extends Component<T,V>,V> {
 
     public T required(boolean required) {
         this.required = required;
-        validate.put("required", required);
+        if (required) {
+            validate.put("required", required);
+        } else {
+            validate.remove("required");
+        }
         return (T) this;
     }
 
@@ -260,13 +280,21 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
-    public T validateOnBlur() {
-        json.put("validateOn", "blur");
+    public T validateOnBlur(boolean validateOnBlur) {
+        if (validateOnBlur) {
+            json.put("validateOn", "blur");
+        } else {
+            json.remove("validateOn");
+        }
         return (T) this;
     }
 
-    public T validateOnChange() {
-        json.remove("validateOn");
+    public T modalEdit(boolean modalEdit) {
+        if (modalEdit) {
+            json.put("modalEdit", true);
+        } else {
+            json.remove("modalEdit");
+        }
         return (T) this;
     }
 

@@ -46,6 +46,9 @@ public class Form {
         return validateJson(json);
     }
 
+    /**
+     * Validates a {@link JSONObject} against the rules specified in this form.
+     */
     public FormResponse validateJson(JSONObject json) {
         boolean errorPresent = false;
         Map<String, ResponseValue> responseMap = new LinkedHashMap<>();
