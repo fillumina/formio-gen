@@ -9,18 +9,18 @@ import org.json.JSONObject;
  * @author Francesco Illuminati <fillumina@gmail.com>ncesco Illuminati <fillumina at gmail.com>
  */
 public class FormResponse {
-    
+
     private final Metadata metadata;
     private final Map<String,ResponseValue> map;
     private final boolean errorPresent;
 
     /**
-     * 
+     *
      * @param metadata
      * @param map value for label
-     * @param errorPresent 
+     * @param errorPresent
      */
-    public FormResponse(Metadata metadata, 
+    public FormResponse(Metadata metadata,
             Map<String,ResponseValue> map, boolean errorPresent) {
         this.metadata = metadata;
         this.map = map;
@@ -31,7 +31,8 @@ public class FormResponse {
     public FormResponse withMetadata(Metadata metadata) {
         return new FormResponse(metadata, this.map, this.errorPresent);
     }
-    
+
+    /** @return a json representation of its data. */
     public JSONObject getJsonObject() {
         JSONObject json = new JSONObject();
         map.forEach((k,v) -> json.put(k, v.getJsonObject()) );
@@ -78,11 +79,11 @@ public class FormResponse {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        map.forEach((k,v) -> 
+        map.forEach((k,v) ->
                 buf.append(" ").append(k).append(": ").append(v.toString()).append("\n"));
         return "FormResponse: " + (errorPresent ? "" : "no ") + "error present\n" +
                 metadata + "\nData:\n" +

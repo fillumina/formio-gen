@@ -111,10 +111,9 @@ public class Form {
     }
 
     /**
-     * Produces a JSON representations that passes its own validation
-     * {@link #validateJson(org.json.JSONObject) }.
+     * @return a json object that can be used by formio to create the form.
      */
-    public JSONObject toJSONObject() {
+    public JSONObject toFormioJSONObject() {
         List<JSONObject> list = components.values().stream()
                 .map(c -> c.toJSONObject())
                 .collect(Collectors.toList());

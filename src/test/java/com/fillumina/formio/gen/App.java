@@ -14,16 +14,9 @@ public class App {
 
     public static void main(String[] args) {
         Form form = INSTANCE.createForm();
-        
-        final JSONObject jsonForm = form.toJSONObject();
-        
-//        Map<String,String> valueMap = Map.of(
-//                "age", Value.createSingle("34"),
-//                "name", Value.createSingle("Fracchia"),
-//                "comment", Value.createSingle("Nel mezzo del cammin di nostra vita"),
-//                "sex", Value.createSingle("Male")
-//        );
-        
+
+        final JSONObject jsonForm = form.toFormioJSONObject();
+
         String html = CodeGenerator.generateHtml(jsonForm, "form_post", false);
 
         new WebServer().configure(routes -> routes
