@@ -15,16 +15,16 @@ import org.json.JSONObject;
  * @see https://formio.github.io/formio.js/app/examples/
  * @see https://formio.github.io/formio.js/docs/class/src/components/Components.js~Components.html
  * @see https://github.com/formio/formio.js/wiki/Form-JSON-Schema
- * 
+ *
  * // angular
  * @see https://github.com/formio/angular/wiki/Translations
  * @see https://stackoverflow.com/questions/60667350/angular-formio-set-language-in-formbuilder
- * 
+ *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 // TODO insert data management containers (datagrid and datamap)
 public class Form {
-    
+
     private final JSONObject json;
     private final Map<String, Component<?,?>> allComponents;
     private final Map<String, Component<?,?>> components;
@@ -32,7 +32,7 @@ public class Form {
     /**
      * @see https://github.com/formio/formio.js/wiki/Form-JSON-Schema
      * @param name
-     * @param title 
+     * @param title
      */
     public Form(String name, String title, String id) {
         this.json = new JSONObject();
@@ -43,7 +43,7 @@ public class Form {
         components = new LinkedHashMap<>();
         allComponents = new LinkedHashMap<>();
     }
-    
+
     public Form addComponent(Component<?,?>... componentArray) {
         for (Component<?,?> component : componentArray) {
             final String key = component.getKey();
@@ -57,13 +57,13 @@ public class Form {
         }
         return this;
     }
-    
+
     /** Validates a json string against the rules specified in this form. */
     public FormResponse validateJson(String jsonText) {
         JSONObject json = new JSONObject(jsonText);
         return validateJson(json);
     }
-    
+
     public FormResponse validateJson(JSONObject json) {
         boolean errorPresent = false;
         Map<String,ResponseValue> responseMap = new LinkedHashMap<>();
@@ -71,14 +71,14 @@ public class Form {
         for (Entry<String, Component<?,?>> entry : allComponents.entrySet()) {
             String key = entry.getKey();
             Component<?,?> component = entry.getValue();
-            
+
             Object value;
             try {
                 value = json.get(key);
             } catch (JSONException ex) {
                 if (component.isValue() && component.isRequired()) {
                     errorPresent = true;
-                    ResponseValue response = new ResponseValue(key, null, 
+                    ResponseValue response = new ResponseValue(key, null,
                             component.isSingleton(),
                             FormError.MISSING, key);
                     responseMap.put(key, response);
@@ -91,13 +91,13 @@ public class Form {
             }
             responseMap.put(key, response);
         }
-        
+
         return new FormResponse(Metadata.EMPTY, responseMap, errorPresent);
     }
-    
+
     /**
      * Validates the json string returned by formio.
-     * 
+     *
      * @param errors   list of errors returned (key, error)
      * @param jsonText json text to parse
      * @return the json object (check for errors before accepting it)
@@ -109,7 +109,11 @@ public class Form {
         FormResponse response = validateJson(data);
         return response.withMetadata(metadata);
     }
-    
+
+    /**
+     * Produces a JSON representations that passes its own validation
+     * {@link #validateJson(org.json.JSONObject) }.
+     */
     public JSONObject toJSONObject() {
         List<JSONObject> list = components.values().stream()
                 .map(c -> c.toJSONObject())
