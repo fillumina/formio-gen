@@ -99,8 +99,7 @@ public class Form {
      * @return a json object that can be used by formio to create the form.
      */
     public JSONObject toFormioJSONObject() {
-        // conservative cloning the object
-        return cloneJSONObject(json);
+        return toFormioJSONObjectAddingValues(null);
     }
 
     /**
@@ -112,12 +111,12 @@ public class Form {
         JSONObject data = cloneJSONObject(json);
         if (values != null && !values.isEmpty() && json.keySet().contains("components")) {
             final JSONArray array = json.getJSONArray("components");
-            iterativeSetValue(array, values);
+            iterativeSetValues(array, values);
         }
         return data;
     }
 
-    private void iterativeSetValue(JSONArray array, JSONObject values) {
+    private void iterativeSetValues(JSONArray array, JSONObject values) {
         for (Object item : array) {
             if (item instanceof JSONObject) {
                 JSONObject obj = (JSONObject) item;
@@ -132,12 +131,12 @@ public class Form {
                 }
             } else if (item instanceof JSONArray) {
                 JSONArray components = (JSONArray) item;
-                iterativeSetValue(components, values);
+                iterativeSetValues(components, values);
             }
         }
     }
 
-    private JSONObject cloneJSONObject(JSONObject jsonObject) {
+    private static JSONObject cloneJSONObject(JSONObject jsonObject) {
         return new JSONObject(jsonObject, JSONObject.getNames(jsonObject));
     }
 }
