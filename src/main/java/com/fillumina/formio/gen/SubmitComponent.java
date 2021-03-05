@@ -11,7 +11,11 @@ public class SubmitComponent extends ButtonComponent<CancelComponent> {
     }
 
     public SubmitComponent disableOnInvalid(boolean disableOnInvalid) {
-        json.put("disableOnInvalid", disableOnInvalid);
+        if (disableOnInvalid) {
+            json.put("disableOnInvalid", disableOnInvalid);
+        } else {
+            json.remove("disableOnInvalid");
+        }
         return this;
     }
 }

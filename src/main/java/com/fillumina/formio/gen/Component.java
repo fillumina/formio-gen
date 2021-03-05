@@ -32,10 +32,8 @@ public abstract class Component<T extends Component<T,V>,V> {
         this.json = new JSONObject();
         this.validate = new JSONObject();
         json.put("type", type);
-        json.put("tableView", false);
         json.put("input", true);
         json.put("key", key);
-        //json.put("persistent", true); // don't know exactly
         json.put("path", "clothing");
         multiple(false);
     }
