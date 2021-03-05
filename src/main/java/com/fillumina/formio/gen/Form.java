@@ -1,5 +1,6 @@
 package com.fillumina.formio.gen;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,9 +32,9 @@ public class Form {
             Map<String, Component<?, ?>> allComponents,
             Map<String, Component<?, ?>> components) {
         this.id = id;
-        this.json = json;
-        this.allComponents = allComponents;
-        this.components = components;
+        this.json = new JSONObject(json);
+        this.allComponents = Collections.unmodifiableMap(allComponents);
+        this.components = Collections.unmodifiableMap(components);
     }
 
     /** Validates a json string against the rules specified in this form. */
