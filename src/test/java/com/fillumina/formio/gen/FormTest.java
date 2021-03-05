@@ -1,6 +1,10 @@
 package com.fillumina.formio.gen;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -84,5 +88,42 @@ public class FormTest {
         assertEquals(2, values.size());
         assertEquals("hello world", values.get(0));
         assertEquals("this is me", values.get(1));
+    }
+
+    @Test
+    public void shouldValidateTheReturnedJson() {
+        Form form = FormCreator.createForm();
+        JSONObject json = new JSONObject();
+        json.put("bool123", false);
+        json.put("dt123", "2021-03-11T00:00:00+01:00");
+        json.put("enum123", "Male");
+        json.put("float123", new JSONArray(List.of(12.3, 24.6)));
+        json.put("text123", "Elementare whatson");
+        json.put("area123", "Nel mezzo del cammin di nostra vita");
+        json.put("int123", 12);
+
+        String jsonText = FormioMessageCreator.createFormioJson(json);
+
+        FormResponse response = form.validateJsonFromFormio(jsonText);
+        assertFalse(response.isErrorPresent());
+
+        assertEquals(false,
+                extractValue(response, "bool123").get(0));
+        assertEquals("2021-03-11T00:00:00+01:00",
+                extractValue(response, "dt123").get(0).toString());
+        assertEquals("Male",
+                extractValue(response, "enum123").get(0));
+        assertEquals(List.of(BigDecimal.valueOf(12.3), BigDecimal.valueOf(24.6)),
+                extractValue(response, "float123"));
+        assertEquals("Elementare whatson",
+                extractValue(response, "text123").get(0));
+        assertEquals("Nel mezzo del cammin di nostra vita",
+                extractValue(response, "area123").get(0));
+        assertEquals(BigInteger.valueOf(12),
+                extractValue(response, "int123").get(0));
+    }
+
+    private static List<?> extractValue(FormResponse response, String key) {
+        return response.getMap().get(key).getValues();
     }
 }
