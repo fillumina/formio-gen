@@ -1,11 +1,8 @@
 package com.fillumina.formio.gen;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,37 +22,18 @@ import org.json.JSONObject;
 // TODO insert data management containers (datagrid and datamap)
 public class Form {
 
+    private final String id;
     private final JSONObject json;
     private final Map<String, Component<?,?>> allComponents;
     private final Map<String, Component<?,?>> components;
 
-    /**
-     * @see https://github.com/formio/formio.js/wiki/Form-JSON-Schema
-     * @param name
-     * @param title
-     */
-    public Form(String name, String title, String id) {
-        this.json = new JSONObject();
-        json.put("title", title);
-        json.put("type", "form");
-        json.put("_id", id);
-        json.put("display", "form");
-        components = new LinkedHashMap<>();
-        allComponents = new LinkedHashMap<>();
-    }
-
-    public Form addComponent(Component<?,?>... componentArray) {
-        for (Component<?,?> component : componentArray) {
-            final String key = component.getKey();
-            components.put(key, component);
-            if (component.isValue()) {
-                allComponents.put(key, component);
-            }
-            if (component instanceof Container) {
-                ((Container)component).addComponentsToMap(allComponents);
-            }
-        }
-        return this;
+    public Form(String id, JSONObject json,
+            Map<String, Component<?, ?>> allComponents,
+            Map<String, Component<?, ?>> components) {
+        this.id = id;
+        this.json = json;
+        this.allComponents = allComponents;
+        this.components = components;
     }
 
     /** Validates a json string against the rules specified in this form. */
@@ -114,12 +92,7 @@ public class Form {
      * @return a json object that can be used by formio to create the form.
      */
     public JSONObject toFormioJSONObject() {
-        List<JSONObject> list = components.values().stream()
-                .map(c -> c.toJSONObject())
-                .collect(Collectors.toList());
-        JSONArray array = new JSONArray();
-        list.stream().forEach(j -> array.put(j));
-        json.put("components", array);
-        return json;
+        // conservative cloning the object
+        return new JSONObject(json);
     }
 }

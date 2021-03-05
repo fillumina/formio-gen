@@ -36,46 +36,49 @@ public class FormTest {
 
     @Test
     public void shouldFailIfRequiredComponentIsMissingFromJson() {
-        Form form = new Form("form", "Form", "form123");
+        FormBuilder builder = new FormBuilder("form", "Form", "form123");
         final String id = "txt123";
-        form.addComponent(new TextFieldComponent(id).required(true));
+        builder.addComponent(new TextFieldComponent(id).required(true));
+        Form form = builder.build();
 
         // missing data content
         FormResponse response = form.validateJsonFromFormio(JSON_HEADER + JSON_FOOTER);
         assertTrue(response.isErrorPresent());
-        
+
         ResponseValue componentResponse = response.getMap().get(id);
         assertEquals(FormError.MISSING, componentResponse.getError());
     }
 
     @Test
     public void shouldAcceptIfRequiredComponentPresent() {
-        Form form = new Form("form", "Form", "form123");
+        FormBuilder builder = new FormBuilder("form", "Form", "form123");
         final String id = "txt123";
-        form.addComponent(new TextFieldComponent(id).required(true));
+        builder.addComponent(new TextFieldComponent(id).required(true));
+        Form form = builder.build();
 
         String content = "hello world";
         String jsonContent = "\"txt123\":\"" + content + "\"";
         FormResponse response = form.validateJsonFromFormio(JSON_HEADER + jsonContent + JSON_FOOTER);
         assertFalse(response.isErrorPresent());
-        
+
         ResponseValue componentResponse = response.getMap().get(id);
         assertEquals(content, componentResponse.getValues().get(0));
     }
 
     @Test
     public void shouldAcceptIfRequiredComponentListPresent() {
-        Form form = new Form("form", "Form", "form123");
+        FormBuilder builder = new FormBuilder("form", "Form", "form123");
         final String id = "txt123";
-        form.addComponent(new TextFieldComponent(id)
+        builder.addComponent(new TextFieldComponent(id)
                 .multiple(true)
                 .required(true));
+        Form form = builder.build();
 
         String content = "[\"hello world\",\"this is me\"]";
         String jsonContent = "\"txt123\":" + content;
         FormResponse response = form.validateJsonFromFormio(JSON_HEADER + jsonContent + JSON_FOOTER);
         assertFalse(response.isErrorPresent());
-        
+
         ResponseValue componentResponse = response.getMap().get(id);
         final List<?> values = componentResponse.getValues();
         assertEquals(2, values.size());

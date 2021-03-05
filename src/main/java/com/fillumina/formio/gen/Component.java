@@ -26,7 +26,7 @@ public abstract class Component<T extends Component<T,V>,V> {
     private Integer minLength;
     private Integer maxLength;
     private Pattern pattern;
-    
+
     public Component(String type, String key) {
         this.key = key;
         this.json = new JSONObject();
@@ -42,31 +42,31 @@ public abstract class Component<T extends Component<T,V>,V> {
 
     /** The object might be already in the right format or should convert from {@code String}. */
     public abstract V convert(Object s) throws ParseException;
-    
+
     protected boolean isRequired() {
         return required == Boolean.TRUE;
     }
-    
+
     /** Containers don't return values. */
     protected boolean isValue() {
         return true;
     }
-    
+
     public T externalValidator(Function<V,Object> validator) {
         this.externalValidator = validator;
         return (T) this;
     }
-    
+
     /** @return true if doesn't accept multiple values. */
     public boolean isSingleton() {
-        return multiple == Boolean.FALSE || multiple == null || 
+        return multiple == Boolean.FALSE || multiple == null ||
                 (maxItems != null && maxItems == 1);
     }
-    
+
     /**
-     * 
+     *
      * @param value can be a java object (like BigDecimal or String) or a JSONArray
-     * @return 
+     * @return
      */
     public ResponseValue validate(Object value) {
         List<V> list;
@@ -77,7 +77,7 @@ public abstract class Component<T extends Component<T,V>,V> {
             return new ResponseValue(key, List.of(e.getMessage()), singleton,
                     FormError.PARSE_EXCEPTION);
         }
-        if ((required == Boolean.TRUE || (minLength != null && minLength > 0)) && 
+        if ((required == Boolean.TRUE || (minLength != null && minLength > 0)) &&
                 (list == null || list.stream().anyMatch(o -> o == null)) ) {
             return new ResponseValue(key, list, singleton, FormError.NULL_VALUE);
         }
@@ -97,7 +97,7 @@ public abstract class Component<T extends Component<T,V>,V> {
             if (maxLength != null && list.stream().anyMatch(o -> o.toString().length() > maxLength)) {
                 return new ResponseValue(key, list, singleton, FormError.LENGTH_TOO_LONG);
             }
-            if (pattern != null && 
+            if (pattern != null &&
                     list.stream().anyMatch(o -> !pattern.matcher(o.toString()).matches() ) ) {
                 return new ResponseValue(key, list, singleton, FormError.PATTERN_NOT_MATCHING);
             }
@@ -113,8 +113,8 @@ public abstract class Component<T extends Component<T,V>,V> {
         }
         return innerValidate(list);
     }
-    
-    /** 
+
+    /**
      * Called <i>after</i> basic validation has been performed.
      * Overwrite this method to do further validations and/or call super to report no error result.
      */
@@ -135,25 +135,25 @@ public abstract class Component<T extends Component<T,V>,V> {
                 } else {
                     list.add(convert(o));
                 }
-            }            
+            }
             return list;
         }
         V convert = convert(value);
         return convert == null ? null : List.of(convert);
     }
-    
+
     public String getKey() {
         return key;
     }
-    
+
     public JSONObject toJSONObject() {
         addMultipleValidation();
         json.put("validate", validate);
         return json;
     }
-    
-    public T defaultValue(JSONObject jsonObject) {
-        json.put("defaultValue", jsonObject);
+
+    public T defaultValue(Object object) {
+        json.put("defaultValue", object);
         return (T) this;
     }
 
@@ -168,27 +168,27 @@ public abstract class Component<T extends Component<T,V>,V> {
         json.put(name, value);
         return (T) this;
     }
-    
+
     public T tabIndex(int tabIndex) {
         json.put("tabindex", tabIndex);
         return (T) this;
     }
-    
+
     public T tableView(boolean tableView) {
         json.put("tableView", tableView);
         return (T) this;
     }
-    
+
     public T theme(Theme theme) {
         json.put("theme", theme.toString());
         return (T) this;
     }
-    
+
     public T theme(String theme) {
         json.put("theme", theme);
         return (T) this;
     }
-    
+
     public T label(String label) {
         json.put("label", label);
         return (T) this;
@@ -210,14 +210,14 @@ public abstract class Component<T extends Component<T,V>,V> {
         json.put("multiple", multiple);
         return (T) this;
     }
-    
+
     public T minItems(int minItems) {
         this.minItems = minItems;
         validate.put("minItems", minItems);
         multiple(true);
         return (T) this;
     }
-    
+
     public T maxItems(int maxItems) {
         this.maxItems = maxItems;
         validate.put("maxItems", maxItems);
@@ -259,12 +259,12 @@ public abstract class Component<T extends Component<T,V>,V> {
         validate.put("pattern", pattern);
         return (T) this;
     }
-    
+
     public T validateOnBlur() {
         json.put("validateOn", "blur");
         return (T) this;
     }
-    
+
     public T validateOnChange() {
         json.remove("validateOn");
         return (T) this;
@@ -278,7 +278,7 @@ public abstract class Component<T extends Component<T,V>,V> {
      * <pre>
      * valid = (input === 3) ? true : 'Must be 3';
      * </pre>
-     * 
+     *
      * <a href='https://github.com/formio/formio.js/issues/1867'>
      * Provided variables:
      * </a>
@@ -304,7 +304,7 @@ public abstract class Component<T extends Component<T,V>,V> {
         validate.put("custom", custom);
         return (T) this;
     }
-    
+
     private void addMultipleValidation() {
         final boolean minItemsNotNull = minItems != null;
         final boolean maxItemsNotNull = maxItems != null;
@@ -327,7 +327,7 @@ public abstract class Component<T extends Component<T,V>,V> {
             custom(buf.toString());
         }
     }
-    
+
     public Component<?,?>[] createMultipleInfoComponent() {
         if (minItems == null && maxItems == null) {
             return new Component[]{this};

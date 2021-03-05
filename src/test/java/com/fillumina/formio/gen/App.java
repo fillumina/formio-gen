@@ -41,38 +41,38 @@ public class App {
     }
 
     private Form createForm() {
-        Form form = new Form("clothing", "Clothing", "123");
-        form.addComponent(new BooleanComponent("bool123")
+        FormBuilder builder = new FormBuilder("clothing", "Clothing", "123");
+        builder.addComponent(new BooleanComponent("bool123")
                 .label("is this true")
                 .placeholder("answer sincerely")
                 .required(false));
-        form.addComponent(new DateTimeComponent("dt123")
+        builder.addComponent(new DateTimeComponent("dt123")
                 .label("married")
                 .placeholder("select marriage date")
                 .datePicker(true)
                 .enableTime(false)
                 .required(true));
-        form.addComponent(new EnumComponent("enum123")
+        builder.addComponent(new EnumComponent("enum123")
                 .label("Sex")
                 .placeholder("Say your sex")
                 .values("Male", "Female")
                 .required(true));
-        form.addComponent(new DecimalComponent("float123")
+        builder.addComponent(new DecimalComponent("float123")
                 .label("Height")
                 .placeholder("Tell your real height")
                 .minItems(1)
                 .maxItems(3)
                 .required(true)
                 .createMultipleInfoComponent());
-        form.addComponent(new IntegerComponent("int123")
+        builder.addComponent(new IntegerComponent("int123")
                 .label("Age")
                 .placeholder("Tell your real age")
                 .required(true));
-        form.addComponent(new TextFieldComponent("text123")
+        builder.addComponent(new TextFieldComponent("text123")
                 .label("Name")
                 .placeholder("Tell your name")
                 .required(true));
-        form.addComponent(new WysiwygComponent("area123")
+        builder.addComponent(new WysiwygComponent("area123")
                 .label("Comment")
                 .placeholder("Say something about you")
                 // FIXME not working, it must be an upstream bug
@@ -80,7 +80,7 @@ public class App {
                 .rows(5)
                 .required(false)
                 .showCharCount(true));
-        form.addComponent(new FieldSetContainer("panel123")
+        builder.addComponent(new FieldSetContainer("panel123")
                 .label("Panel 1")
                 .legend("field set of my dreams")
                 //.title("Title panel 1")
@@ -90,12 +90,12 @@ public class App {
                         .label("In the panel")
                         .maxLength(20)
                         .minLength(1)));
-        form.addComponent(new ColumnsContainer("col123")
+        builder.addComponent(new ColumnsContainer("col123")
                 .createColumn().addComponent(new SubmitComponent().label("Send Form")).endCol()
                 .createColumn().addComponent(new CancelComponent().label("Clear Data")).endCol());
-//        form.addComponent(new SubmitComponent().label("Send Form"));
+//        form.addComponent(new SubmitComponent().label("Send FormBuilder"));
 //        form.addComponent(new CancelComponent().label("Clear Data"));
-        return form;
+        return builder.build();
     }
 
     private static final String TOOLBAR =

@@ -33,22 +33,13 @@ public class DateTimeComponent extends Component<DateTimeComponent, XMLGregorian
         final String str = obj.toString();
         try {
             return toXmlGregorianCalendar(str);
-        } catch (DatatypeConfigurationException ex) {
-//            // it's ok
-//        }
-//        try {
-//            String str = obj.toString();
-//            TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(str);
-//            Instant i = Instant.from(ta);
-//            Date d = Date.from(i);
-//            return d;
-//        } catch (DateTimeParseException ex) {
+        } catch (DatatypeConfigurationException | IllegalArgumentException ex) {
             throw new ParseException(str, 0);
         }
     }
 
     private XMLGregorianCalendar toXmlGregorianCalendar(final Object obj)
-            throws DatatypeConfigurationException {
+            throws DatatypeConfigurationException, IllegalArgumentException {
         XMLGregorianCalendar xmlGregorianCalendar =
                 DatatypeFactory.newInstance().newXMLGregorianCalendar(obj.toString());
         return xmlGregorianCalendar;
