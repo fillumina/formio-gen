@@ -10,37 +10,45 @@ import org.json.JSONObject;
  */
 public class App {
 
-    public static final App INSTANCE = new App();
-
     public static void main(String[] args) {
-        Form form = INSTANCE.createForm();
-
-        final JSONObject jsonForm = form.toFormioJSONObject();
-
-        String html = CodeGenerator.generateHtml(jsonForm, "form_post", false);
+        App app = new App();
 
         new WebServer().configure(routes -> routes
-                .get("/", html)
+                .get("/", () -> app.createHtml())
                 .post("/form_post", context -> {
                     String jsonResponse = context.request().content();
                     System.out.println("POST: \n" + jsonResponse);
-                    INSTANCE.validateJsonResponse(form, jsonResponse);
+                    app.validateJsonResponse(jsonResponse);
                     return Payload.created();
                 })
         ).start();
     }
 
-    private void validateJsonResponse(Form form, String response) {
+    private final Form form;
+    private JSONObject values;
+
+    public App() {
+        this.form = createForm();
+    }
+
+    private void validateJsonResponse(String response) {
         FormResponse formResponse = form.validateJsonFromFormio(response);
         System.out.println(formResponse);
         System.out.println("");
-        FormResponse secondValidation = form.validateJson(formResponse.getJsonObject().toString());
+        values = formResponse.getJsonObject();
+        FormResponse secondValidation = form.validateJson(values.toString());
         System.out.println(secondValidation);
         System.out.println("");
         System.out.println((formResponse.equals(secondValidation) ? "" : "NOT ") + "EQUALS");
     }
 
-    private Form createForm() {
+    private String createHtml() {
+        JSONObject jsonForm = form.toFormioJSONObjectAddingValues(values);
+        String html = CodeGenerator.generateHtml(jsonForm, "form_post", false);
+        return html;
+    }
+
+    private static Form createForm() {
         FormBuilder builder = new FormBuilder("clothing", "Clothing", "123");
         builder.addComponent(new BooleanComponent("bool123")
                 .label("is this true")

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,19 +26,21 @@ public class Form {
 
     private final String id;
     private final JSONObject json;
-    private final Map<String, Component<?,?>> allComponents;
-    private final Map<String, Component<?,?>> components;
+    private final Map<String, Component<?, ?>> allComponents;
+    private final Map<String, Component<?, ?>> components;
 
     public Form(String id, JSONObject json,
             Map<String, Component<?, ?>> allComponents,
             Map<String, Component<?, ?>> components) {
         this.id = id;
-        this.json = new JSONObject(json);
+        this.json = cloneJSONObject(json);
         this.allComponents = Collections.unmodifiableMap(allComponents);
         this.components = Collections.unmodifiableMap(components);
     }
 
-    /** Validates a json string against the rules specified in this form. */
+    /**
+     * Validates a json string against the rules specified in this form.
+     */
     public FormResponse validateJson(String jsonText) {
         JSONObject json = new JSONObject(jsonText);
         return validateJson(json);
@@ -45,11 +48,11 @@ public class Form {
 
     public FormResponse validateJson(JSONObject json) {
         boolean errorPresent = false;
-        Map<String,ResponseValue> responseMap = new LinkedHashMap<>();
+        Map<String, ResponseValue> responseMap = new LinkedHashMap<>();
 
-        for (Entry<String, Component<?,?>> entry : allComponents.entrySet()) {
+        for (Entry<String, Component<?, ?>> entry : allComponents.entrySet()) {
             String key = entry.getKey();
-            Component<?,?> component = entry.getValue();
+            Component<?, ?> component = entry.getValue();
 
             Object value;
             try {
@@ -77,7 +80,7 @@ public class Form {
     /**
      * Validates the json string returned by formio.
      *
-     * @param errors   list of errors returned (key, error)
+     * @param errors list of errors returned (key, error)
      * @param jsonText json text to parse
      * @return the json object (check for errors before accepting it)
      */
@@ -95,5 +98,43 @@ public class Form {
     public JSONObject toFormioJSONObject() {
         // conservative cloning the object
         return new JSONObject(json);
+    }
+
+    /**
+     * @param values a flat object with key->value
+     * @return a json object that can be used by formio to create the form.
+     */
+    public JSONObject toFormioJSONObjectAddingValues(JSONObject values) {
+        // conservative cloning the object
+        JSONObject data = cloneJSONObject(json);
+        if (values != null && !values.isEmpty() && json.keySet().contains("components")) {
+            final JSONArray array = json.getJSONArray("components");
+            iterativeSetValue(array, values);
+        }
+        return data;
+    }
+
+    private void iterativeSetValue(JSONArray array, JSONObject values) {
+        for (Object item : array) {
+            if (item instanceof JSONObject) {
+                JSONObject obj = (JSONObject) item;
+                if (obj.keySet().contains("key")) {
+                    String objectKey = obj.getString("key");
+                    if (objectKey != null && values.keySet().contains(objectKey)) {
+                        Object value = values.get(objectKey);
+                        if (value != null) {
+                            obj.put("defaultValue", value);
+                        }
+                    }
+                }
+            } else if (item instanceof JSONArray) {
+                JSONArray components = (JSONArray) item;
+                iterativeSetValue(components, values);
+            }
+        }
+    }
+
+    private JSONObject cloneJSONObject(JSONObject jsonObject) {
+        return new JSONObject(jsonObject, JSONObject.getNames(jsonObject));
     }
 }
