@@ -73,9 +73,12 @@ public class WysiwygComponent extends AbstractTextAreaComponent<WysiwygComponent
     }
 
     @Override
-    public String convert(String txt) throws ParseException {
+    public String convert(Object obj) throws ParseException {
+        if (obj == null) {
+            return null;
+        }
         // clean text from all dangerous code.
-        return POLICY.sanitize(txt);
+        return POLICY.sanitize(obj.toString());
     }
     
     @Override

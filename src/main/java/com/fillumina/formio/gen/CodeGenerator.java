@@ -29,13 +29,16 @@ public class CodeGenerator {
             "        Formio.icons = 'fontawesome';\n" +
             "        Formio.createForm(document.getElementById('formio'),\n";
 
-    private static final String LANGUAGES_END = "  }\n";
+    private static final String START_OPTIONS = ", {\n ";
     
-    private static final String FORM_START =
+    private static final String CODE_START =
+            "  }\n" +
             "}).then(function(form) {\n" +
             "  // Defaults are provided as follows.\n" +
             "  form.submission = {\n" +
-            "    data: {\n" +
+            "    data: {\n";
+    
+    private static final String CODE_AFTER_DATA = 
             //            "      firstName: 'Joe',\n" +
             //            "      lastName: 'Smith'\n" +
             "    }\n" +
@@ -45,7 +48,7 @@ public class CodeGenerator {
             "    let xhr = new XMLHttpRequest();\n" +
             "    let url = \"";
     
-    private static final String FORM_END = 
+    private static final String CODE_END = 
             "\"; \n" +
             "\n" +
             "    // open a connection \n" +
@@ -90,30 +93,35 @@ public class CodeGenerator {
             "  </body>\n" +
             "</html>";
 
-    public static String generateHtml(JSONObject object, String postUrl) {
+    public static String generateHtml(JSONObject object, String postUrl, boolean readOnly) {
         StringBuilder buf = new StringBuilder();
         buf.append(HTML_HEADER);
-        buf.append(generateJavascript(object, postUrl));
+        buf.append(generateJavascript(object, postUrl, readOnly));
         buf.append(FOOTER);
         return buf.toString();
     }
 
-    public static String generateJavascript(JSONObject object, String postUrl)
+    public static String generateJavascript(
+            JSONObject object, String postUrl, boolean readonly)
             throws JSONException {
         StringBuilder buf = new StringBuilder();
         buf.append(JAVASCRIPT_START);
         buf.append(object.toString(4));
+        buf.append(START_OPTIONS);
+        if (readonly) {
+            buf.append("  readOnly: true,\n");
+        }
         buf.append(generateLanguages("it", "en", "it"));
-        buf.append(LANGUAGES_END);
-        buf.append(FORM_START);
+        buf.append(CODE_START);
+        buf.append(CODE_AFTER_DATA);
         buf.append(postUrl);
-        buf.append(FORM_END);
+        buf.append(CODE_END);
         return buf.toString();
     }
 
     // https://github.com/formio/formio.js/wiki/Translations
     private static String generateLanguages(String defLang, String... languages) {
-        String header = ", {\n language: '" + defLang + "',\n  i18n: {\n";        
+        String header = "language: '" + defLang + "',\n  i18n: {\n";        
         
         List<String> list = new ArrayList<>();
         for (String lang : languages) {

@@ -8,21 +8,21 @@ import java.util.Map;
  * @author Francesco Illuminati <fillumina@gmail.com>ncesco Illuminati <fillumina at gmail.com>
  */
 public class Container<T extends Container<T>> extends Component<T,Void> {
-    
+
     private final Map<String, Component<?,?>> components;
     
     public Container(String type, String key) {
         super(type, key);
         components = new LinkedHashMap<>();
     }
-    
+
     @Override
     protected boolean isValue() {
         return false;
     }
     
     @Override
-    public Void convert(String s) {
+    public Void convert(Object s) {
         return null;
     }
 

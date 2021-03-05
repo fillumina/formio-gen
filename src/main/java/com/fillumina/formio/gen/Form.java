@@ -44,12 +44,14 @@ public class Form {
         allComponents = new LinkedHashMap<>();
     }
     
-    public Form addComponent(Component<?,?> component) {
-        final String key = component.getKey();
-        components.put(key, component);
-        allComponents.put(key, component);
-        if (component instanceof Container) {
-            ((Container)component).addComponentsToMap(allComponents);
+    public Form addComponent(Component<?,?>... componentArray) {
+        for (Component<?,?> component : componentArray) {
+            final String key = component.getKey();
+            components.put(key, component);
+            allComponents.put(key, component);
+            if (component instanceof Container) {
+                ((Container)component).addComponentsToMap(allComponents);
+            }
         }
         return this;
     }
@@ -67,7 +69,7 @@ public class Form {
         
         boolean errorPresent = false;
         
-        Map<String,ComponentValue> responseMap = new LinkedHashMap<>();
+        Map<String,ResponseValue> responseMap = new LinkedHashMap<>();
         
         JSONObject data = jsonObject.getJSONObject("data");
         for (Entry<String, Component<?,?>> entry : allComponents.entrySet()) {
@@ -78,22 +80,22 @@ public class Form {
             try {
                 value = data.get(key);
             } catch (JSONException ex) {
-                if (component.isRequired() && component.isValue()) {
+                if (component.isValue() && component.isRequired()) {
                     errorPresent = true;
-                    ComponentValue response = new ComponentValue(key, null, 
+                    ResponseValue response = new ResponseValue(key, null, 
                             FormError.MISSING, key);
                     responseMap.put(key, response);
                 }
                 continue;
             }
-            ComponentValue response = component.validate(value);
+            ResponseValue response = component.validate(value);
             if (response.isErrorPresent()) {
                 errorPresent = true;
             }
             responseMap.put(key, response);
         }
         
-        return new FormResponse(metadata, responseMap, errorPresent);
+        return new FormResponse(data, metadata, responseMap, errorPresent);
     }
     
     public JSONObject toJSONObject() {

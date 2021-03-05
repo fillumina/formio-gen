@@ -16,9 +16,12 @@ public class ArrayContainer<T extends ArrayContainer<T>> extends Container<T> {
         json.put("components", components);
     }
     
-    public T addComponent(Component<?,?> component) {
-        components.put(component.toJSONObject());
-        addValidatingComponent(component);
+    public T addComponent(Component<?,?>... componentArray) {
+        for (Component<?,?> component : componentArray) {
+            final String key = component.getKey();
+            components.put(component.toJSONObject());
+            addValidatingComponent(component);
+        }
         return (T) this;
     }
 }

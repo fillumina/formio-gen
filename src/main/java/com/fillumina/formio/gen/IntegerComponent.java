@@ -43,14 +43,14 @@ public class IntegerComponent extends Component<IntegerComponent, BigInteger> {
     }
 
     @Override
-    protected ComponentValue innerValidate(List<BigInteger> list) {
+    protected ResponseValue innerValidate(List<BigInteger> list) {
         for (BigInteger integer : list) {
             if (min != null && integer.compareTo(min) <= -1) {
-                return new ComponentValue(getKey(), list,
+                return new ResponseValue(getKey(), list,
                         FormError.MIN_VALUE, integer.toString());
             }
             if (max != null && integer.compareTo(max) >= 1) {
-                return new ComponentValue(getKey(), list,
+                return new ResponseValue(getKey(), list,
                         FormError.MAX_VALUE, integer.toString());
             }
         }
@@ -58,9 +58,19 @@ public class IntegerComponent extends Component<IntegerComponent, BigInteger> {
     }
 
     @Override
-    public BigInteger convert(String s) throws ParseException {
+    public BigInteger convert(Object obj) throws ParseException {
+        if (obj == null) {
+            return null;
+        }
+        if (obj instanceof BigInteger) {
+            return (BigInteger) obj;
+        }
+        if (obj instanceof Number) {
+            return BigInteger.valueOf(((Number) obj).longValue());
+        }
         try {
-            return s == null ? null : new BigInteger(s);
+            String str = obj.toString();
+            return new BigInteger(str);
         } catch (NumberFormatException e) {
             throw new ParseException(e.getMessage(), 0);
         }

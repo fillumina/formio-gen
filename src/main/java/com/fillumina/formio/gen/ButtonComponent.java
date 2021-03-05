@@ -34,7 +34,7 @@ public class ButtonComponent extends Component<ButtonComponent,Void> {
     }
 
     @Override
-    public Void convert(String s) throws ParseException {
+    public Void convert(Object s) throws ParseException {
         return null;
     }
 }

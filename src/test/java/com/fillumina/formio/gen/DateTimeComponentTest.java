@@ -21,21 +21,21 @@ public class DateTimeComponentTest {
         String nowAsISO = getNowAsISOString(0);
 
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        ComponentValue cv = comp.validate(nowAsISO);
+        ResponseValue cv = comp.validate(nowAsISO);
         assertFalse(cv.isErrorPresent());
     }
 
     @Test
     public void shouldAcceptDefaultValue() throws ParseException {
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        ComponentValue cv = comp.validate("2021-03-11T00:00:00+01:00");
+        ResponseValue cv = comp.validate("2021-03-11T00:00:00+01:00");
         assertFalse(cv.isErrorPresent());
     }
 
     @Test
     public void shouldRejectBadFormat() {
         DateTimeComponent comp = new DateTimeComponent("dt123");
-        ComponentValue cv = comp.validate("12-03-2010");
+        ResponseValue cv = comp.validate("12-03-2010");
         assertEquals(FormError.PARSE_EXCEPTION, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
@@ -44,7 +44,7 @@ public class DateTimeComponentTest {
     public void shouldRejectBeforeMin() {
         DateTimeComponent comp = new DateTimeComponent("dt123");
         comp.minDate(getNowAsDate(-3));
-        ComponentValue cv = comp.validate(getNowAsISOString(-10));
+        ResponseValue cv = comp.validate(getNowAsISOString(-10));
         assertEquals(FormError.DATE_BEFORE_MIN, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
@@ -53,7 +53,7 @@ public class DateTimeComponentTest {
     public void shouldRejectAfterMax() {
         DateTimeComponent comp = new DateTimeComponent("dt123");
         comp.maxDate(getNowAsDate(3));
-        ComponentValue cv = comp.validate(getNowAsISOString(10));
+        ResponseValue cv = comp.validate(getNowAsISOString(10));
         assertEquals(FormError.DATE_AFTER_MAX, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
@@ -63,7 +63,7 @@ public class DateTimeComponentTest {
         DateTimeComponent comp = new DateTimeComponent("dt123");
         comp.minDate(getNowAsDate(-3));
         comp.maxDate(getNowAsDate(3));
-        ComponentValue cv = comp.validate(getNowAsISOString(0));
+        ResponseValue cv = comp.validate(getNowAsISOString(0));
         assertFalse(cv.isErrorPresent());
     }
 

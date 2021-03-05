@@ -3,7 +3,6 @@ package com.fillumina.formio.gen;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import org.json.JSONArray;
@@ -41,12 +40,14 @@ public abstract class Component<T extends Component<T,V>,V> {
         multiple(false);
     }
 
-    public abstract V convert(String s) throws ParseException;
+    /** The object might be already in the right format or should convert from {@code String}. */
+    public abstract V convert(Object s) throws ParseException;
     
     protected boolean isRequired() {
         return required == Boolean.TRUE;
     }
     
+    /** Containers don't return values. */
     protected boolean isValue() {
         return true;
     }
@@ -61,42 +62,42 @@ public abstract class Component<T extends Component<T,V>,V> {
      * @param errors adds errors to this
      * @param value might be a single value or an array of values
      */
-    public ComponentValue validate(Object value) {
+    public ResponseValue validate(Object value) {
         List<V> list;
         try {
             list = toList(value);
         } catch (ParseException e) {
-            return new ComponentValue(key, List.of(e.getMessage()), FormError.PARSE_EXCEPTION);
+            return new ResponseValue(key, List.of(e.getMessage()), FormError.PARSE_EXCEPTION);
         }
         if ((required == Boolean.TRUE || (minLength != null && minLength > 0)) && 
                 (list == null || list.stream().anyMatch(o -> o == null)) ) {
-            return new ComponentValue(key, list, FormError.NULL_VALUE);
+            return new ResponseValue(key, list, FormError.NULL_VALUE);
         }
         if (list != null) {
             if (multiple == Boolean.FALSE && list.size() > 1) {
-                return new ComponentValue(key, list, FormError.MULTIPLE_VALUES);
+                return new ResponseValue(key, list, FormError.MULTIPLE_VALUES);
             }
             if (minItems != null && list.size() < minItems) {
-                return new ComponentValue(key, list, FormError.MULTIPLE_VALUES_TOO_FEW);
+                return new ResponseValue(key, list, FormError.MULTIPLE_VALUES_TOO_FEW);
             }
             if (maxItems != null && list.size() > maxItems) {
-                return new ComponentValue(key, list, FormError.MULTIPLE_VALUES_TOO_MANY);
+                return new ResponseValue(key, list, FormError.MULTIPLE_VALUES_TOO_MANY);
             }
             if (minLength != null && list.stream().anyMatch(o -> o.toString().length() < minLength)) {
-                return new ComponentValue(key, list, FormError.LENGTH_TOO_SHORT);
+                return new ResponseValue(key, list, FormError.LENGTH_TOO_SHORT);
             }
             if (maxLength != null && list.stream().anyMatch(o -> o.toString().length() > maxLength)) {
-                return new ComponentValue(key, list, FormError.LENGTH_TOO_LONG);
+                return new ResponseValue(key, list, FormError.LENGTH_TOO_LONG);
             }
             if (pattern != null && 
                     list.stream().anyMatch(o -> !pattern.matcher(o.toString()).matches() ) ) {
-                return new ComponentValue(key, list, FormError.PATTERN_NOT_MATCHING);
+                return new ResponseValue(key, list, FormError.PATTERN_NOT_MATCHING);
             }
             if (externalValidator != null) {
                 for (V v : list) {
                     Object error = externalValidator.apply(v);
                     if (error != null) {
-                        return new ComponentValue(key, list, 
+                        return new ResponseValue(key, list, 
                                 FormError.EXTERNAL_VALIDATOR, error.toString());
                     }
                 }
@@ -109,9 +110,9 @@ public abstract class Component<T extends Component<T,V>,V> {
      * Called <i>after</i> basic validation has been performed.
      * Overwrite this method to do further validations and/or call super to report no error result.
      */
-    protected ComponentValue innerValidate(List<V> list) {
+    protected ResponseValue innerValidate(List<V> list) {
         // return no error result
-        return new ComponentValue(key, list);
+        return new ResponseValue(key, list);
     }
 
     private List<V> toList(Object value) throws ParseException {
@@ -124,12 +125,12 @@ public abstract class Component<T extends Component<T,V>,V> {
                 if (o == null) {
                     list.add(null);
                 } else {
-                    list.add(convert(Objects.toString(o)));
+                    list.add(convert(o));
                 }
             }            
             return list;
         }
-        V convert = convert(Objects.toString(value));
+        V convert = convert(value);
         return convert == null ? null : List.of(convert);
     }
     
@@ -143,8 +144,8 @@ public abstract class Component<T extends Component<T,V>,V> {
         return json;
     }
     
-    public T defaultValue(Object defaultValue) {
-        json.put("defaultValue", Objects.toString(defaultValue));
+    public T defaultValue(JSONObject jsonObject) {
+        json.put("defaultValue", jsonObject);
         return (T) this;
     }
 
@@ -250,6 +251,16 @@ public abstract class Component<T extends Component<T,V>,V> {
         validate.put("pattern", pattern);
         return (T) this;
     }
+    
+    public T validateOnBlur() {
+        json.put("validateOn", "blur");
+        return (T) this;
+    }
+    
+    public T validateOnChange() {
+        json.remove("validateOn");
+        return (T) this;
+    }
 
     /**
      * You must assign the valid variable as either true or an error message if validation fails.
@@ -309,4 +320,24 @@ public abstract class Component<T extends Component<T,V>,V> {
         }
     }
     
+    public Component<?,?>[] createMultipleInfoComponent() {
+        if (minItems == null && maxItems == null) {
+            return new Component[]{this};
+        } else {
+            StringBuilder buf = new StringBuilder();
+            buf.append("<span style=\"color: grey;font-size: small;\">[");
+            if (minItems != null) {
+                buf.append("min items=").append(minItems);
+                if (maxItems != null) {
+                    buf.append(", ");
+                }
+            }
+            if (maxItems != null) {
+                buf.append("max items=").append(maxItems);
+            }
+            buf.append("]</span>");
+            Component<?,?> info = new HtmlComponent(key+"_info").html(buf.toString());
+            return new Component[]{this, info};
+        }
+    }
 }

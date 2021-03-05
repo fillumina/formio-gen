@@ -14,7 +14,7 @@ public class BooleanComponentTest {
     @Test
     public void shouldRejectWrongBoolean() {
         BooleanComponent comp = new BooleanComponent("txt123");
-        ComponentValue cv = comp.validate("yes");
+        ResponseValue cv = comp.validate("yes");
         assertEquals(FormError.PARSE_EXCEPTION, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
@@ -22,14 +22,14 @@ public class BooleanComponentTest {
     @Test
     public void shouldAcceptTrue() {
         BooleanComponent comp = new BooleanComponent("txt123");
-        ComponentValue cv = comp.validate("true");
+        ResponseValue cv = comp.validate("true");
         assertFalse(cv.isErrorPresent());
     }
         
     @Test
     public void shouldAcceptFunnyFalse() {
         BooleanComponent comp = new BooleanComponent("txt123");
-        ComponentValue cv = comp.validate("FaLse");
+        ResponseValue cv = comp.validate("FaLse");
         assertFalse(cv.isErrorPresent());
     }
 }

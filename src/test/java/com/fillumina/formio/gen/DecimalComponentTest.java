@@ -15,7 +15,7 @@ public class DecimalComponentTest {
     @Test
     public void shouldRejectValue() {
         DecimalComponent comp = new DecimalComponent("flt123");
-        ComponentValue cv = comp.validate("12,34");
+        ResponseValue cv = comp.validate("12,34");
         assertEquals(FormError.PARSE_EXCEPTION, cv.getError());
         assertTrue(cv.isErrorPresent());
     }    
@@ -23,7 +23,7 @@ public class DecimalComponentTest {
     @Test
     public void shouldAcceptValue() {
         DecimalComponent comp = new DecimalComponent("flt123");
-        ComponentValue cv = comp.validate("12.34");
+        ResponseValue cv = comp.validate("12.34");
         assertFalse(cv.isErrorPresent());
     }    
     
@@ -32,7 +32,7 @@ public class DecimalComponentTest {
         DecimalComponent comp = new DecimalComponent("flt123");
         comp.min(10.99);
         comp.max(20.34);
-        ComponentValue cv = comp.validate("12.34");
+        ResponseValue cv = comp.validate("12.34");
         assertFalse(cv.isErrorPresent());
     }    
     
@@ -40,7 +40,7 @@ public class DecimalComponentTest {
     public void shouldRejectMin() {
         DecimalComponent comp = new DecimalComponent("flt123");
         comp.min(10.99);
-        ComponentValue cv = comp.validate("2.34");
+        ResponseValue cv = comp.validate("2.34");
         assertEquals(FormError.MIN_VALUE, cv.getError());
         assertTrue(cv.isErrorPresent());
     }    
@@ -49,7 +49,7 @@ public class DecimalComponentTest {
     public void shouldRejectMax() {
         DecimalComponent comp = new DecimalComponent("flt123");
         comp.max(10.99);
-        ComponentValue cv = comp.validate("12.34");
+        ResponseValue cv = comp.validate("12.34");
         assertEquals(FormError.MAX_VALUE, cv.getError());
         assertTrue(cv.isErrorPresent());
     }    
@@ -59,7 +59,7 @@ public class DecimalComponentTest {
         DecimalComponent comp = new DecimalComponent("flt123");
         comp.min(new BigDecimal("10.99"));
         comp.minInclusive(true);
-        ComponentValue cv = comp.validate("10.99");
+        ResponseValue cv = comp.validate("10.99");
         assertFalse(cv.isErrorPresent());
     }    
     
@@ -68,7 +68,7 @@ public class DecimalComponentTest {
         DecimalComponent comp = new DecimalComponent("flt123");
         comp.max(new BigDecimal("10.99"));
         comp.maxInclusive(true);
-        ComponentValue cv = comp.validate("10.99");
+        ResponseValue cv = comp.validate("10.99");
         assertFalse(cv.isErrorPresent());
     }    
     

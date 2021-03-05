@@ -2,6 +2,7 @@ package com.fillumina.formio.gen;
 
 import net.codestory.http.WebServer;
 import net.codestory.http.payload.Payload;
+import org.json.JSONObject;
 
 /**
  *
@@ -13,7 +14,17 @@ public class App {
 
     public static void main(String[] args) {
         Form form = INSTANCE.createForm();
-        String html = CodeGenerator.generateHtml(form.toJSONObject(), "form_post");
+        
+        final JSONObject jsonForm = form.toJSONObject();
+        
+//        Map<String,String> valueMap = Map.of(
+//                "age", Value.createSingle("34"),
+//                "name", Value.createSingle("Fracchia"),
+//                "comment", Value.createSingle("Nel mezzo del cammin di nostra vita"),
+//                "sex", Value.createSingle("Male")
+//        );
+        
+        String html = CodeGenerator.generateHtml(jsonForm, "form_post", false);
 
         new WebServer().configure(routes -> routes
                 .get("/", html)
@@ -37,10 +48,6 @@ public class App {
                 .label("is this true")
                 .placeholder("answer sincerely")
                 .required(false));
-        form.addComponent(new DayComponent("date123")
-                .label("birthday")
-                .placeholder("select birthday")
-                .required(true));
         form.addComponent(new DateTimeComponent("dt123")
                 .label("married")
                 .placeholder("select marriage date")
@@ -55,9 +62,10 @@ public class App {
         form.addComponent(new DecimalComponent("float123")
                 .label("Height")
                 .placeholder("Tell your real height")
-                .minItems(2)
+                .minItems(1)
                 .maxItems(3)
-                .required(true));
+                .required(true)
+                .createMultipleInfoComponent());
         form.addComponent(new IntegerComponent("int123")
                 .label("Age")
                 .placeholder("Tell your real age")
@@ -72,7 +80,8 @@ public class App {
                 // FIXME not working, it must be an upstream bug
                 .toolbar(TOOLBAR)
                 .rows(5)
-                .required(false));
+                .required(false)
+                .showCharCount(true));
         form.addComponent(new FieldSetContainer("panel123")
                 .label("Panel 1")
                 .legend("field set of my dreams")

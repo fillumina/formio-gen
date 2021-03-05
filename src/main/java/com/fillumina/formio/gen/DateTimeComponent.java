@@ -27,12 +27,16 @@ public class DateTimeComponent extends Component<DateTimeComponent, Date> {
 
     //https://stackoverflow.com/a/60214805/203204
     @Override
-    public Date convert(String s) throws ParseException {
-        if (s == null) {
+    public Date convert(Object obj) throws ParseException {
+        if (obj == null) {
             return null;
         }
+        if (obj instanceof Date) {
+            return (Date) obj;
+        }
         try {
-            TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(s);
+            String str = obj.toString();
+            TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(str);
             Instant i = Instant.from(ta);
             Date d = Date.from(i);
             return d;
@@ -42,16 +46,16 @@ public class DateTimeComponent extends Component<DateTimeComponent, Date> {
     }
 
     @Override
-    protected ComponentValue innerValidate(List<Date> list) {
+    protected ResponseValue innerValidate(List<Date> list) {
         if (list != null) {
             for (Date date : list) {
                 if (date != null) {
                     if (minDate != null && date.before(minDate)) {
-                        return new ComponentValue(getKey(), list,
+                        return new ResponseValue(getKey(), list,
                                 FormError.DATE_BEFORE_MIN);
                     }
                     if (maxDate != null && date.after(maxDate)) {
-                        return new ComponentValue(getKey(), list,
+                        return new ResponseValue(getKey(), list,
                                 FormError.DATE_AFTER_MAX);
                     }
                 }

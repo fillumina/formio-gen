@@ -13,10 +13,14 @@ public class BooleanComponent extends Component<BooleanComponent,Boolean> {
     }
 
     @Override
-    public Boolean convert(String str) throws ParseException {
-        if (str == null) {
-            return false;
+    public Boolean convert(Object obj) throws ParseException {
+        if (obj == null) {
+            return null;
         }
+        if (obj instanceof Boolean) {
+            return (Boolean) obj;
+        }
+        final String str = obj.toString();
         String armonized = str.trim().toUpperCase();
         if (!"FALSE".equals(armonized) && !"TRUE".equals(armonized)) {
             throw new ParseException(str, 0);

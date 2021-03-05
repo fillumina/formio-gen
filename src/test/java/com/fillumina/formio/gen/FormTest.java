@@ -44,7 +44,7 @@ public class FormTest {
         FormResponse response = form.validateJson(JSON_HEADER + JSON_FOOTER);
         assertTrue(response.isErrorPresent());
         
-        ComponentValue componentResponse = response.getMap().get(id);
+        ResponseValue componentResponse = response.getMap().get(id);
         assertEquals(FormError.MISSING, componentResponse.getError());
     }
 
@@ -59,7 +59,7 @@ public class FormTest {
         FormResponse response = form.validateJson(JSON_HEADER + jsonContent + JSON_FOOTER);
         assertFalse(response.isErrorPresent());
         
-        ComponentValue componentResponse = response.getMap().get(id);
+        ResponseValue componentResponse = response.getMap().get(id);
         assertEquals(content, componentResponse.getValues().get(0));
     }
 
@@ -76,7 +76,7 @@ public class FormTest {
         FormResponse response = form.validateJson(JSON_HEADER + jsonContent + JSON_FOOTER);
         assertFalse(response.isErrorPresent());
         
-        ComponentValue componentResponse = response.getMap().get(id);
+        ResponseValue componentResponse = response.getMap().get(id);
         final List<?> values = componentResponse.getValues();
         assertEquals(2, values.size());
         assertEquals("hello world", values.get(0));

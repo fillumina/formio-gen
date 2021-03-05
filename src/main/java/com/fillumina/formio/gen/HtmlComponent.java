@@ -8,8 +8,8 @@ import java.text.ParseException;
  */
 public class HtmlComponent extends Component<HtmlComponent,Void> {
 
-    public HtmlComponent() {
-        super("content", null);
+    public HtmlComponent(String key) {
+        super("content", key);
         json.put("input", false);
     }
     
@@ -24,7 +24,7 @@ public class HtmlComponent extends Component<HtmlComponent,Void> {
     }
     
     @Override
-    public Void convert(String s) throws ParseException {
+    public Void convert(Object s) throws ParseException {
         return null;
     }
 }

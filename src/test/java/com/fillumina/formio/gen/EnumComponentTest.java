@@ -15,7 +15,7 @@ public class EnumComponentTest {
     public void shouldRejectWrongSelection() {
         EnumComponent comp = new EnumComponent("txt123");
         comp.values("one", "two", "three");
-        ComponentValue cv = comp.validate("four");
+        ResponseValue cv = comp.validate("four");
         assertEquals(FormError.ENUM_ITEM_NOT_PRESENT, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
@@ -24,7 +24,7 @@ public class EnumComponentTest {
     public void shouldAcceptGoodSelection() {
         EnumComponent comp = new EnumComponent("txt123");
         comp.values("one", "two", "three");
-        ComponentValue cv = comp.validate("two");
+        ResponseValue cv = comp.validate("two");
         assertFalse(cv.isErrorPresent());
     }
 }

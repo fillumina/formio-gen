@@ -14,7 +14,7 @@ public class IntegerComponentTest {
     @Test
     public void shouldRejectValue() {
         IntegerComponent comp = new IntegerComponent("int123");
-        ComponentValue cv = comp.validate("12.34");
+        ResponseValue cv = comp.validate("12.34");
         assertEquals(FormError.PARSE_EXCEPTION, cv.getError());
         assertTrue(cv.isErrorPresent());
     }    
@@ -22,7 +22,7 @@ public class IntegerComponentTest {
     @Test
     public void shouldAcceptValue() {
         IntegerComponent comp = new IntegerComponent("int123");
-        ComponentValue cv = comp.validate("1234");
+        ResponseValue cv = comp.validate("1234");
         assertFalse(cv.isErrorPresent());
     }    
     
@@ -31,7 +31,7 @@ public class IntegerComponentTest {
         IntegerComponent comp = new IntegerComponent("int123");
         comp.min(10);
         comp.max(20);
-        ComponentValue cv = comp.validate("12");
+        ResponseValue cv = comp.validate("12");
         assertFalse(cv.isErrorPresent());
     }    
     
@@ -39,7 +39,7 @@ public class IntegerComponentTest {
     public void shouldRejectMin() {
         IntegerComponent comp = new IntegerComponent("int123");
         comp.min(10);
-        ComponentValue cv = comp.validate("2");
+        ResponseValue cv = comp.validate("2");
         assertEquals(FormError.MIN_VALUE, cv.getError());
         assertTrue(cv.isErrorPresent());
     }    
@@ -48,7 +48,7 @@ public class IntegerComponentTest {
     public void shouldRejectMax() {
         IntegerComponent comp = new IntegerComponent("int123");
         comp.max(10);
-        ComponentValue cv = comp.validate("12");
+        ResponseValue cv = comp.validate("12");
         assertEquals(FormError.MAX_VALUE, cv.getError());
         assertTrue(cv.isErrorPresent());
     }    

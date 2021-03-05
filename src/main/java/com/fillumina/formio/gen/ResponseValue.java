@@ -7,32 +7,33 @@ import java.util.Locale;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>ncesco Illuminati <fillumina at gmail.com>
  */
-public class ComponentValue {
+public class ResponseValue {
     
     private final String key;
     private final List<?> values;
     private final FormError error;
-    private final Object[] validation;
+    private final Object[] validationParameters;
 
-    public ComponentValue(String key, Object value) {
+    public ResponseValue(String key, Object value) {
         this.key = key;
         this.values = List.of(value);
         this.error = null;
-        this.validation = null;
+        this.validationParameters = null;
     }
 
-    public ComponentValue(String key, List<?> values) {
+    public ResponseValue(String key, List<?> values) {
         this.key = key;
         this.values = values;
         this.error = null;
-        this.validation = null;
+        this.validationParameters = null;
     }
 
-    public ComponentValue(String key, List<?> values, FormError error, Object... validation) {
+    public ResponseValue(String key, List<?> values, FormError error, 
+            Object... validationParameters) {
         this.key = key;
         this.values = values;
         this.error = error;
-        this.validation = validation;
+        this.validationParameters = validationParameters;
     }
     
     public boolean isErrorPresent() {
@@ -52,7 +53,7 @@ public class ComponentValue {
     }
 
     public String getErrorDescription(Locale locale) {
-        return error.getError(locale, validation);
+        return error.getError(locale, validationParameters);
     }
 
     @Override

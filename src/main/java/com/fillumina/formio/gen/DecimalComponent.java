@@ -55,18 +55,18 @@ public class DecimalComponent extends Component<DecimalComponent,BigDecimal> {
     }
 
     @Override
-    protected ComponentValue innerValidate(List<BigDecimal> list) {
+    protected ResponseValue innerValidate(List<BigDecimal> list) {
         if (list != null) {
             for (BigDecimal dec : list) {
                 if (dec != null) {
                     int compareMin = minInclusive == Boolean.TRUE ? 0 : 1;
                     if (min != null && dec.compareTo(min) < compareMin) {
-                        return new ComponentValue(getKey(), list, 
+                        return new ResponseValue(getKey(), list, 
                                 FormError.MIN_VALUE, dec.toPlainString());
                     }
                     int compareMax = maxInclusive == Boolean.TRUE ? 0 : -1;
                     if (max != null && dec.compareTo(max) > compareMax) {
-                        return new ComponentValue(getKey(), list, 
+                        return new ResponseValue(getKey(), list, 
                                 FormError.MAX_VALUE, dec.toPlainString());
                     }
                 }
@@ -76,9 +76,16 @@ public class DecimalComponent extends Component<DecimalComponent,BigDecimal> {
     }
 
     @Override
-    public BigDecimal convert(String s) throws ParseException {
+    public BigDecimal convert(Object obj) throws ParseException {
+        if (obj == null) {
+            return null;
+        }
+        if (obj instanceof BigDecimal) {
+            return (BigDecimal) obj;
+        }
         try {
-            return s == null ? null : new BigDecimal(s);
+            String str = obj.toString();
+            return new BigDecimal(str);
         } catch (NumberFormatException e) {
             throw new ParseException(e.getMessage(), 0);
         }
