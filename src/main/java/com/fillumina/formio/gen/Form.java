@@ -33,7 +33,7 @@ public class Form {
             Map<String, Component<?, ?>> allComponents,
             Map<String, Component<?, ?>> components) {
         this.id = id;
-        this.json = cloneJSONObject(json);
+        this.json = JSONUtils.clone(json);
         this.allComponents = Collections.unmodifiableMap(allComponents);
         this.components = Collections.unmodifiableMap(components);
     }
@@ -108,7 +108,7 @@ public class Form {
      */
     public JSONObject toFormioJSONObjectAddingValues(JSONObject values) {
         // conservative cloning the object
-        JSONObject data = cloneJSONObject(json);
+        JSONObject data = JSONUtils.clone(json);
         if (values != null && !values.isEmpty() && json.keySet().contains("components")) {
             final JSONArray array = json.getJSONArray("components");
             iterativeSetValues(array, values);
@@ -134,9 +134,5 @@ public class Form {
                 iterativeSetValues(components, values);
             }
         }
-    }
-
-    private static JSONObject cloneJSONObject(JSONObject jsonObject) {
-        return new JSONObject(jsonObject, JSONObject.getNames(jsonObject));
     }
 }
