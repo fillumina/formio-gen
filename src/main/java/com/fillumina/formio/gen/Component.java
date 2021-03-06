@@ -34,7 +34,6 @@ public abstract class Component<T extends Component<T,V>,V> {
         json.put("type", type);
         json.put("input", true);
         json.put("key", key);
-        json.put("path", "clothing");
         multiple(false);
     }
 
@@ -161,9 +160,15 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
-    /** Use to add undescribed or not available options to the Component. */
+    /** Adds a named options directly to the Component. */
     public T addOption(String name, Object value) {
         json.put(name, value);
+        return (T) this;
+    }
+
+    /** Adds a named options directly to the Validate. */
+    public T addValidate(String name, Object value) {
+        validate.put(name, value);
         return (T) this;
     }
 
