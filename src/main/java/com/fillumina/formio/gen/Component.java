@@ -233,7 +233,9 @@ public abstract class Component<T extends Component<T,V>,V> {
     public T minItems(int minItems) {
         this.minItems = minItems;
         validate.put("minItems", minItems);
-        multiple(true);
+        if (minItems > 0) {
+            multiple(true);
+        }
         return (T) this;
     }
 
@@ -360,7 +362,7 @@ public abstract class Component<T extends Component<T,V>,V> {
     }
 
     public Component<?,?>[] createMultipleInfoComponent() {
-        if (minItems == null && maxItems == null) {
+        if (minItems == null && (maxItems == null || maxItems == 1)) {
             return new Component[]{this};
         } else {
             StringBuilder buf = new StringBuilder();
