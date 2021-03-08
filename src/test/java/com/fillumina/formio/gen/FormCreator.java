@@ -37,11 +37,9 @@ public class FormCreator {
                 .label("Name")
                 .placeholder("Tell your name")
                 .required(true));
-        builder.addComponent(new WysiwygComponent("area123")
+        builder.addComponent(new WysiwygComponent("area123", true)
                 .label("Comment")
                 .placeholder("Say something about you")
-                // FIXME not working, it must be an upstream bug
-                .toolbar(TOOLBAR)
                 .rows(5)
                 .required(false)
                 .showCharCount(true));
@@ -62,47 +60,4 @@ public class FormCreator {
 //        form.addComponent(new CancelComponent().label("Clear Data"));
         return builder.build();
     }
-
-    private static final String TOOLBAR =
-            "[['bold', 'italic', 'underline', 'strike']]\n";
-
-    private static final String TOOLBAR_1 =
-            "        [\n" +
-            "          ['bold', 'italic', 'underline', 'strike'],\n" +
-            "          ['blockquote', 'code-block'],\n" +
-            "\n" +
-            "          [{ 'list': 'ordered'}, { 'list': 'bullet' }],\n" +
-            "          [{ 'indent': '-1'}, { 'indent': '+1' }],\n" +
-            "          [{ 'direction': 'rtl' }],\n" +
-            "\n" +
-            "          [{ 'size': ['small', false, 'large', 'huge'] }],\n" +
-            "\n" +
-            "          [{ 'color': [] }, { 'background': [] }],\n" +
-            "          [{ 'font': [] }],\n" +
-            "          [{ 'align': [] }],\n" +
-            "\n" +
-            "          ['clean']\n" +
-            "        ]";
-
-    private static final String TOOLBAR_OK =
-            "        [\n" +
-            "          ['bold', 'italic', 'underline', 'strike'],\n" +
-            "          ['blockquote', 'code-block'],\n" +
-            "\n" +
-            "          [{ 'header': 1 }, { 'header': 2 }],\n" +
-            "          [{ 'list': 'ordered'}, { 'list': 'bullet' }],\n" +
-            "          [{ 'script': 'sub'}, { 'script': 'super' }],\n" +
-            "          [{ 'indent': '-1'}, { 'indent': '+1' }],\n" +
-            "          [{ 'direction': 'rtl' }],\n" +
-            "\n" +
-            "          [{ 'size': ['small', false, 'large', 'huge'] }],\n" +
-            "          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],\n" +
-            "\n" +
-            "          [{ 'color': [] }, { 'background': [] }],\n" +
-            "          [{ 'font': [] }],\n" +
-            "          [{ 'align': [] }],\n" +
-            "\n" +
-            "          ['clean']\n" +
-            "        ]";
-
 }

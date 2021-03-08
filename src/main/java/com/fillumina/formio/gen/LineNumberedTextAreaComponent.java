@@ -10,7 +10,7 @@ import org.owasp.html.Sanitizers;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class WysiwygComponent extends AbstractTextAreaComponent<WysiwygComponent> {
+public class LineNumberedTextAreaComponent extends AbstractTextAreaComponent<LineNumberedTextAreaComponent> {
 
     // https://github.com/OWASP/java-html-sanitizer#prepackaged-policies
     private static final PolicyFactory POLICY = Sanitizers.FORMATTING
@@ -24,20 +24,10 @@ public class WysiwygComponent extends AbstractTextAreaComponent<WysiwygComponent
             .toFactory();
 
 
-    public WysiwygComponent(String key, boolean simple) {
+    public LineNumberedTextAreaComponent(String key) {
         super(key);
-        if (simple) {
-            json.put("editor", "quill");
-        } else {
-            json.put("editor", "ckeditor");
-        }
+        json.put("editor", "ace");
     }
-
-    public WysiwygComponent theme(String theme) {
-        json.put("theme", theme);
-        return this;
-    }
-
 
     @Override
     public String convert(Object obj) throws ParseException {
