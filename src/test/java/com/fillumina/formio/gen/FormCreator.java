@@ -16,13 +16,12 @@ public class FormCreator {
                 .label("married")
                 .placeholder("select marriage date")
                 .datePicker(true)
-                .enableTime(false)
-                .required(true));
+                .enableTime(false));
         builder.addComponent(new EnumComponent("enum123")
                 .label("Sex")
                 .placeholder("Say your sex")
                 .values("Male", "Female")
-                .required(true));
+                .requiredIfNotEmptyComponent("dt123"));
         builder.addComponent(new DecimalComponent("float123")
                 .label("Height")
                 .placeholder("Tell your real height")

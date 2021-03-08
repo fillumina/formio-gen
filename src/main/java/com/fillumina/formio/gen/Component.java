@@ -27,6 +27,8 @@ public abstract class Component<T extends Component<T,V>,V> {
     private Integer maxLength;
     private Pattern pattern;
 
+    private String dependentOnKey;
+
     public Component(String type, String key) {
         this.key = key;
         this.json = new JSONObject();
@@ -145,6 +147,7 @@ public abstract class Component<T extends Component<T,V>,V> {
 
     public JSONObject toJSONObject() {
         addMultipleValidation();
+        addDependOnComponentValidation();
         json.put("validate", validate);
         return json;
     }
@@ -303,6 +306,11 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
+    public T requiredIfNotEmptyComponent(String key) {
+        this.dependentOnKey = key;
+        return (T) this;
+    }
+
     /**
      * You must assign the valid variable as either true or an error message if validation fails.
      * The global variables {@code input}, {@code component}, and {@code valid} are provided.
@@ -333,9 +341,16 @@ public abstract class Component<T extends Component<T,V>,V> {
      * @param custom
      * @return
      */
-    public T custom(String custom) {
+    public T customValidation(String custom) {
         validate.put("custom", custom);
         return (T) this;
+    }
+
+    private void addDependOnComponentValidation() {
+        if (dependentOnKey != null) {
+            customValidation("valid = (data['" + dependentOnKey + "'] && !data['" + key +
+                    "']) ? 'required' : true;");
+        }
     }
 
     private void addMultipleValidation() {
@@ -357,7 +372,7 @@ public abstract class Component<T extends Component<T,V>,V> {
             }
             buf.append(" ) ? true : ");
             buf.append("'multiplicity';");
-            custom(buf.toString());
+            customValidation(buf.toString());
         }
     }
 
