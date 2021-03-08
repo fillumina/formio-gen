@@ -266,7 +266,7 @@ public abstract class Component<T extends Component<T,V>,V> {
     }
 
     public T description(String description) {
-        validate.put("description", description);
+        json.put("description", description);
         return (T) this;
     }
 
