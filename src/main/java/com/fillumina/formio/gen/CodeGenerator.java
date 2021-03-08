@@ -18,27 +18,28 @@ public class CodeGenerator {
     private static final String HTML_HEADER =
             "<html>\n" +
             "  <head>\n" +
+            "  <meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n" +
             "  <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css\">\n" +
             "  <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\">\n" +
             "  <link rel=\"stylesheet\" href=\"https://cdn.form.io/formiojs/formio.full.min.css\">\n" +
             "  <script src=\"https://cdn.form.io/formiojs/formio.full.min.js\"></script>\n" +
             "    <script type='text/javascript'>\n";
-    
+
     private static final String JAVASCRIPT_START =
             "      window.onload = function() {\n" +
             "        Formio.icons = 'fontawesome';\n" +
             "        Formio.createForm(document.getElementById('formio'),\n";
 
     private static final String START_OPTIONS = ", {\n ";
-    
+
     private static final String CODE_START =
             "  }\n" +
             "}).then(function(form) {\n" +
             "  // Defaults are provided as follows.\n" +
             "  form.submission = {\n" +
             "    data: {\n";
-    
-    private static final String CODE_AFTER_DATA = 
+
+    private static final String CODE_AFTER_DATA =
             //            "      firstName: 'Joe',\n" +
             //            "      lastName: 'Smith'\n" +
             "    }\n" +
@@ -47,8 +48,8 @@ public class CodeGenerator {
             "    // Creating a XHR object \n" +
             "    let xhr = new XMLHttpRequest();\n" +
             "    let url = \"";
-    
-    private static final String CODE_END = 
+
+    private static final String CODE_END =
             "\"; \n" +
             "\n" +
             "    // open a connection \n" +
@@ -121,8 +122,8 @@ public class CodeGenerator {
 
     // https://github.com/formio/formio.js/wiki/Translations
     private static String generateLanguages(String defLang, String... languages) {
-        String header = "language: '" + defLang + "',\n  i18n: {\n";        
-        
+        String header = "language: '" + defLang + "',\n  i18n: {\n";
+
         List<String> list = new ArrayList<>();
         for (String lang : languages) {
             try (InputStream is = CodeGenerator.class
