@@ -56,8 +56,6 @@ public class FormCreator {
         builder.addComponent(new ColumnsContainer("col123")
                 .createColumn().addComponent(new SubmitComponent().label("Send Form")).endCol()
                 .createColumn().addComponent(new CancelComponent().label("Clear Data")).endCol());
-//        form.addComponent(new SubmitComponent().label("Send FormBuilder"));
-//        form.addComponent(new CancelComponent().label("Clear Data"));
         return builder.build();
     }
 }
