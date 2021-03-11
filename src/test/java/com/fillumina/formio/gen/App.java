@@ -18,7 +18,7 @@ public class App {
                 .get("/", () -> app.createHtml())
                 .post("/form_post", context -> {
                     String jsonResponse = context.request().content();
-                    app.validateJsonResponse(jsonResponse);
+                    app.parseJsonResponse(jsonResponse);
                     return Payload.created();
                 })
         ).start();
@@ -31,7 +31,7 @@ public class App {
         this.form = FormCreator.createForm();
     }
 
-    private void validateJsonResponse(String response) {
+    private void parseJsonResponse(String response) {
         System.out.println("RECEIVED JSON: " + response);
 
         // show parsed response
@@ -41,14 +41,6 @@ public class App {
 
         // set values so that the next form regeneration will include them as default
         this.values = formResponse.getJsonObject();
-
-        // pass the values back into form validation to check if they pass (they should)
-        FormResponse secondValidation = form.validateJson(values);
-        System.out.println(secondValidation);
-        System.out.println("");
-
-        // check equality from parsed response with parsed revalidation
-        System.out.println((formResponse.equals(secondValidation) ? "" : "NOT ") + "EQUALS");
     }
 
     // dynamically creates HTML code
