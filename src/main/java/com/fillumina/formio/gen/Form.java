@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -108,22 +109,23 @@ public class Form {
      * @return a json object that can be used by formio to create the form.
      */
     public JSONObject toFormioJSONObjectAddingValues(JSONObject values) {
-        // conservative cloning the object
-        JSONObject data = JSONUtils.clone(json);
-        if (values != null && !values.isEmpty() && json.keySet().contains("components")) {
-            final JSONArray array = json.getJSONArray("components");
-            iterativeSetValues(array, values);
+        if (values == null || values.isEmpty()) {
+            return json;
         }
+        JSONObject data = JSONUtils.clone(json);
+        final JSONArray array = data.getJSONArray("components");
+        iterativeSetValues(array, values);
         return data;
     }
 
     private void iterativeSetValues(JSONArray array, JSONObject values) {
+        Set<String> valueKeys = values.keySet();
         for (Object item : array) {
             if (item instanceof JSONObject) {
                 JSONObject obj = (JSONObject) item;
                 if (obj.keySet().contains("key")) {
                     String objectKey = obj.getString("key");
-                    if (objectKey != null && values.keySet().contains(objectKey)) {
+                    if (objectKey != null && valueKeys.contains(objectKey)) {
                         Object value = values.get(objectKey);
                         if (value != null) {
                             obj.put("defaultValue", value);

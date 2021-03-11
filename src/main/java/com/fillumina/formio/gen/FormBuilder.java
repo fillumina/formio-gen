@@ -25,7 +25,6 @@ public class FormBuilder {
 
     private final String id;
     private final JSONObject json;
-    private final Map<String, Component<?,?>> allComponents;
     private final Map<String, Component<?,?>> components;
 
     /**
@@ -41,25 +40,27 @@ public class FormBuilder {
         json.put("_id", id);
         json.put("display", "form");
         components = new LinkedHashMap<>();
-        allComponents = new LinkedHashMap<>();
     }
 
     public FormBuilder addComponent(Component<?,?>... componentArray) {
         for (Component<?,?> component : componentArray) {
             final String key = component.getKey();
             components.put(key, component);
-            if (component.isValue()) {
-                allComponents.put(key, component);
-            }
-            if (component instanceof Container) {
-                ((Container)component).addComponentsToMap(allComponents);
-            }
         }
         return this;
     }
 
     public Form build() {
         final JSONObject jsonObject = toFormioJSONObject();
+        Map<String, Component<?, ?>> allComponents = new LinkedHashMap<>();
+        for (Component c : components.values()) {
+            if (c.isValue()) {
+                allComponents.put(c.getKey(), c);
+            }
+            if (c instanceof AbstractNonValueComponent) {
+                ((AbstractNonValueComponent)c).addComponentsToMap(allComponents);
+            }
+        }
         return new Form(id, jsonObject, allComponents, components);
     }
 
