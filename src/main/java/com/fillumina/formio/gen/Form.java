@@ -29,15 +29,12 @@ public class Form {
     private final String id;
     private final JSONObject json;
     private final Map<String, Component<?, ?>> allComponents;
-    private final Map<String, Component<?, ?>> components;
 
     public Form(String id, JSONObject json,
-            Map<String, Component<?, ?>> allComponents,
-            Map<String, Component<?, ?>> components) {
+            Map<String, Component<?, ?>> allComponents) {
         this.id = id;
         this.json = JSONUtils.clone(json);
         this.allComponents = Collections.unmodifiableMap(allComponents);
-        this.components = Collections.unmodifiableMap(components);
     }
 
     /**
@@ -109,33 +106,47 @@ public class Form {
      * @return a json object that can be used by formio to create the form.
      */
     public JSONObject toFormioJSONObjectAddingValues(JSONObject values) {
-        if (values == null || values.isEmpty()) {
-            return json;
-        }
+        // defensive cloning
         JSONObject data = JSONUtils.clone(json);
+        if (values == null || values.isEmpty()) {
+            return data;
+        }
         final JSONArray array = data.getJSONArray("components");
-        iterativeSetValues(array, values);
+        Set<String> valueKeys = values.keySet();
+        iterativeSetArray(array, values, valueKeys);
         return data;
     }
 
-    private void iterativeSetValues(JSONArray array, JSONObject values) {
-        Set<String> valueKeys = values.keySet();
+    private void iterativeSetArray(JSONArray array, JSONObject values, Set<String> valueKeys) {
         for (Object item : array) {
             if (item instanceof JSONObject) {
                 JSONObject obj = (JSONObject) item;
-                if (obj.keySet().contains("key")) {
-                    String objectKey = obj.getString("key");
-                    if (objectKey != null && valueKeys.contains(objectKey)) {
-                        Object value = values.get(objectKey);
-                        if (value != null) {
-                            obj.put("defaultValue", value);
-                        }
-                    }
-                }
+                iterativeSetObject(obj, values, valueKeys);
             } else if (item instanceof JSONArray) {
                 JSONArray components = (JSONArray) item;
-                iterativeSetValues(components, values);
+                iterativeSetArray(components, values, valueKeys);
             }
+        }
+    }
+
+    private void iterativeSetObject(JSONObject obj, JSONObject values, Set<String> valueKeys) {
+        Object valueToSet = null;
+        for (String name : obj.keySet()) {
+            Object prop = obj.get(name);
+            if (prop instanceof JSONArray) {
+                iterativeSetArray((JSONArray) prop, values, valueKeys);
+            } else if (valueToSet == null && name.equals("key")) {
+                String objectKey = obj.getString("key");
+                if (valueKeys.contains(objectKey)) {
+                    Object value = values.get(objectKey);
+                    if (objectKey != null && value != null) {
+                        valueToSet = value;
+                    }
+                }
+            }
+        }
+        if (valueToSet != null) {
+            obj.put("defaultValue", valueToSet);
         }
     }
 }

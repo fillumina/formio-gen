@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class JSONUtils {
 
     public static JSONObject clone(JSONObject jsonObject) {
-        return new JSONObject(jsonObject, JSONObject.getNames(jsonObject));
+        return new JSONObject(jsonObject.toString());
     }
 
     public static JSONObject merge(JSONObject obj1, JSONObject obj2) {

@@ -61,7 +61,7 @@ public class FormBuilder {
                 ((AbstractNonValueComponent)c).addComponentsToMap(allComponents);
             }
         }
-        return new Form(id, jsonObject, allComponents, components);
+        return new Form(id, jsonObject, allComponents);
     }
 
     /**
