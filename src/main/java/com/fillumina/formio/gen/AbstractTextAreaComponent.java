@@ -5,9 +5,25 @@ package com.fillumina.formio.gen;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class AbstractTextAreaComponent<T extends StringComponent<T>> extends StringComponent<T> {
-    
+
     protected AbstractTextAreaComponent(String key) {
         super("textarea", key);
+        json.put("row", 1);
+    }
+
+    public T allowSpellCheck(boolean spellcheck) {
+        json.put("spellcheck", spellcheck);
+        return (T) this;
+    }
+
+    public T inputFormat(TextInputFormat textInputFormat) {
+        json.put("inputFormat", textInputFormat.toString());
+        return (T) this;
+    }
+
+    public T autoExpand(boolean autoExpand) {
+        json.put("autoExpand", autoExpand);
+        return (T) this;
     }
 
     public T rows(int rows) {
@@ -24,5 +40,5 @@ public class AbstractTextAreaComponent<T extends StringComponent<T>> extends Str
         json.put("showCharCount", showCharCount);
         return (T) this;
     }
-    
+
 }

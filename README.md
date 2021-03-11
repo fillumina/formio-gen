@@ -13,4 +13,5 @@ See:
 
 TO DO:
 
- * Adding data containers support such as data grid and data map.
+ * Add data containers support such as data grid and data map
+ * Add conditional display to components

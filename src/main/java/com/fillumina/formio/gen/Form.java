@@ -22,6 +22,7 @@ import org.json.JSONObject;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 // TODO insert data management containers (datagrid and datamap)
+// TODO insert conditional display
 public class Form {
 
     private final String id;

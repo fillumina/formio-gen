@@ -207,6 +207,21 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
+    public T labelWidthPercentage(int labelWidth) {
+        json.put("labelWidth", labelWidth);
+        return (T) this;
+    }
+
+    public T labelMarginPercentage(int labelMargin) {
+        json.put("labelMargin", labelMargin);
+        return (T) this;
+    }
+
+    public T labelPosition(LabelPosition labelPosition) {
+        json.put("labelPosition", labelPosition);
+        return (T) this;
+    }
+
     public T label(String label) {
         json.put("label", label);
         return (T) this;
