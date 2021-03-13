@@ -285,6 +285,15 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
+    public T disabled(boolean disabled) {
+        if (true) {
+            json.put("disabled", disabled);
+        } else {
+            json.remove("disabled");
+        }
+        return (T) this;
+    }
+
     public T maxLength(int maxLength) {
         this.maxLength = maxLength;
         validate.put("maxLength", maxLength);

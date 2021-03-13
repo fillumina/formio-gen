@@ -51,6 +51,7 @@ public class FormCreator {
                 //.theme(Theme._default)
                 .addComponent(new TextFieldComponent("tf123")
                         .label("In the panel")
+                        .disabled(true)
                         .maxLength(20)
                         .minLength(1)));
         builder.addComponent(new ColumnsContainer("col123")

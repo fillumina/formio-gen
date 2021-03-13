@@ -1,5 +1,8 @@
 package com.fillumina.formio.gen;
 
+import java.util.Set;
+import java.util.function.Consumer;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -18,5 +21,55 @@ public class JSONUtils {
             merged.put(key, obj2.get(key));
         }
         return merged;
+    }
+
+    /**
+     *
+     * @param json can be a JSONObject or a JSONArray
+     * @param values the values that are to set
+     * @param propertyName the properties in the target object that should be set with the value
+     */
+    public static void setValuesToProperty(Object json, JSONObject values, String propertyName) {
+        Set<String> valueKeys = values.keySet();
+        JSONUtils.deepTraverse(json, jobj -> {
+            if (jobj.keySet().contains("key") ) {
+                String propName = jobj.getString("key");
+                if (valueKeys.contains(propName)) {
+                    Object valueToSet = values.get(propName);
+                    jobj.put(propertyName, valueToSet);
+                }
+            }
+        });
+    }
+
+    public static void deepTraverse(Object obj, Consumer<JSONObject> nodeConsumer) {
+        if (obj instanceof JSONObject) {
+            deepTraverseObject((JSONObject) obj, nodeConsumer);
+        } else if (obj instanceof JSONArray) {
+            deepTraverseArray((JSONArray) obj, nodeConsumer);
+        }
+    }
+
+    public static void deepTraverseObject(JSONObject obj, Consumer<JSONObject> nodeConsumer) {
+        Object valueToSet = null;
+        for (String name : obj.keySet()) {
+            Object prop = obj.get(name);
+            if (prop instanceof JSONArray) {
+                deepTraverseArray((JSONArray) prop, nodeConsumer);
+            } else if (prop instanceof JSONObject) {
+                deepTraverseObject((JSONObject) prop, nodeConsumer);
+            }
+        }
+        nodeConsumer.accept(obj);
+    }
+
+    public static void deepTraverseArray(JSONArray array, Consumer<JSONObject> nodeConsumer) {
+        for (Object item : array) {
+            if (item instanceof JSONObject) {
+                deepTraverseObject((JSONObject) item, nodeConsumer);
+            } else if (item instanceof JSONArray) {
+                deepTraverseArray((JSONArray) item, nodeConsumer);
+            }
+        }
     }
 }

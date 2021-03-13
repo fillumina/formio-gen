@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,41 +111,7 @@ public class Form {
             return data;
         }
         final JSONArray array = data.getJSONArray("components");
-        Set<String> valueKeys = values.keySet();
-        iterativeSetArray(array, values, valueKeys);
+        JSONUtils.setValuesToProperty(array, values, "defaultValue");
         return data;
-    }
-
-    private void iterativeSetArray(JSONArray array, JSONObject values, Set<String> valueKeys) {
-        for (Object item : array) {
-            if (item instanceof JSONObject) {
-                JSONObject obj = (JSONObject) item;
-                iterativeSetObject(obj, values, valueKeys);
-            } else if (item instanceof JSONArray) {
-                JSONArray components = (JSONArray) item;
-                iterativeSetArray(components, values, valueKeys);
-            }
-        }
-    }
-
-    private void iterativeSetObject(JSONObject obj, JSONObject values, Set<String> valueKeys) {
-        Object valueToSet = null;
-        for (String name : obj.keySet()) {
-            Object prop = obj.get(name);
-            if (prop instanceof JSONArray) {
-                iterativeSetArray((JSONArray) prop, values, valueKeys);
-            } else if (valueToSet == null && name.equals("key")) {
-                String objectKey = obj.getString("key");
-                if (valueKeys.contains(objectKey)) {
-                    Object value = values.get(objectKey);
-                    if (objectKey != null && value != null) {
-                        valueToSet = value;
-                    }
-                }
-            }
-        }
-        if (valueToSet != null) {
-            obj.put("defaultValue", valueToSet);
-        }
     }
 }
