@@ -59,9 +59,9 @@ public class ResponseValue {
         return error.getError(locale, validationParameters);
     }
 
-    /** @return JSONArray if this is a multiple property or the object {@code value} to be
+    /**
+     * @return JSONArray if this is a multiple property or the object {@code value} to be
      *          used into {@code new JSONObject(value)}.
-     * @return
      */
     public Object getJsonObject() {
         if (values == null) {

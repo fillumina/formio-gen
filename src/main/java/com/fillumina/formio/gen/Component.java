@@ -175,6 +175,15 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
+    public T showIfComponentIs(String targetKey, Object value) {
+        JSONObject conditional = new JSONObject();
+        json.put("conditional", conditional);
+        conditional.put("show", true);
+        conditional.put("when", targetKey);
+        conditional.put("eq", value);
+        return (T) this;
+    }
+
     public T tabIndex(int tabIndex) {
         json.put("tabindex", tabIndex);
         return (T) this;

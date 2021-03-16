@@ -32,7 +32,7 @@ public class FormCreator {
         builder.addComponent(new IntegerComponent("int123")
                 .label("Age")
                 .placeholder("Tell your real age")
-                .required(true));
+                .showIfComponentIs("bool123", true));
         builder.addComponent(new TextFieldComponent("text123")
                 .label("Name")
                 .placeholder("Tell your name")
