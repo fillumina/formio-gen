@@ -43,12 +43,13 @@ public class FormCreator {
                 .rows(5)
                 .required(false)
                 .showCharCount(true));
-        builder.addComponent(new FieldSetContainer("panel123")
+        builder.addComponent(new DataGridContainer("panel123")
                 .label("Panel 1")
-                .legend("field set of my dreams")
-                //.title("Title panel 1")
-                .multiple(true)
-                //.theme(Theme._default)
+                .multiple(true) // multiple doesn't work
+                .minItems(1)
+                .maxItems(3)
+                .addComponent(new BooleanComponent("bool_2")
+                        .label("inside the fieldset"))
                 .addComponent(new TextFieldComponent("tf123")
                         .label("In the panel")
                         .disabled(true)

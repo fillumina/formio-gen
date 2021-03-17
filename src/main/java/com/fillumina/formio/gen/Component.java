@@ -145,13 +145,6 @@ public abstract class Component<T extends Component<T,V>,V> {
         return key;
     }
 
-    public JSONObject toJSONObject() {
-        addMultipleValidation();
-        addDependOnComponentValidation();
-        json.put("validate", validate);
-        return json;
-    }
-
     public T defaultValue(Object object) {
         json.put("defaultValue", object);
         return (T) this;
@@ -189,8 +182,8 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
-    public T tableView(boolean tableView) {
-        if (tableView == true) {
+    public T tableView(Boolean tableView) {
+        if (tableView == Boolean.TRUE) {
             json.put("tableView", tableView);
         } else {
             json.remove("tableView");
@@ -247,9 +240,9 @@ public abstract class Component<T extends Component<T,V>,V> {
     }
 
     /** Unlimited */
-    public T multiple(boolean multiple) {
+    public T multiple(Boolean multiple) {
         this.multiple = multiple;
-        if (multiple) {
+        if (multiple == Boolean.TRUE) {
             json.put("multiple", multiple);
         } else {
             json.remove("multiple");
@@ -257,25 +250,29 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
-    public T minItems(int minItems) {
+    public T minItems(Integer minItems) {
         this.minItems = minItems;
-        validate.put("minItems", minItems);
-        if (minItems > 0) {
+        if (minItems != null) {
+            validate.put("minItems", minItems);
+            if (minItems > 0) {
+                multiple(true);
+            }
+        }
+        return (T) this;
+    }
+
+    public T maxItems(Integer maxItems) {
+        this.maxItems = maxItems;
+        if (maxItems != null) {
+            validate.put("maxItems", maxItems);
             multiple(true);
         }
         return (T) this;
     }
 
-    public T maxItems(int maxItems) {
-        this.maxItems = maxItems;
-        validate.put("maxItems", maxItems);
-        multiple(true);
-        return (T) this;
-    }
-
-    public T required(boolean required) {
+    public T required(Boolean required) {
         this.required = required;
-        if (required) {
+        if (required == Boolean.TRUE) {
             validate.put("required", required);
         } else {
             validate.remove("required");
@@ -283,19 +280,23 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
-    public T minLength(int minLength) {
+    public T minLength(Integer minLength) {
         this.minLength = minLength;
-        validate.put("minLength", minLength);
+        if (minLength != null) {
+            validate.put("minLength", minLength);
+        }
         return (T) this;
     }
 
     public T description(String description) {
-        json.put("description", description);
+        if (description != null) {
+            json.put("description", description);
+        }
         return (T) this;
     }
 
-    public T disabled(boolean disabled) {
-        if (true) {
+    public T disabled(Boolean disabled) {
+        if (disabled == Boolean.TRUE) {
             json.put("disabled", disabled);
         } else {
             json.remove("disabled");
@@ -303,26 +304,32 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
-    public T maxLength(int maxLength) {
+    public T maxLength(Integer maxLength) {
         this.maxLength = maxLength;
-        validate.put("maxLength", maxLength);
+        if (maxLength != null) {
+            validate.put("maxLength", maxLength);
+        }
         return (T) this;
     }
 
     public T pattern(Pattern pattern) {
         this.pattern = pattern;
-        validate.put("pattern", pattern);
+        if (pattern != null) {
+            validate.put("pattern", pattern);
+        }
         return (T) this;
     }
 
     public T pattern(String pattern) {
-        this.pattern = Pattern.compile(pattern);
-        validate.put("pattern", pattern);
+        if (pattern != null) {
+            this.pattern = Pattern.compile(pattern);
+            validate.put("pattern", pattern);
+        }
         return (T) this;
     }
 
-    public T validateOnBlur(boolean validateOnBlur) {
-        if (validateOnBlur) {
+    public T validateOnBlur(Boolean validateOnBlur) {
+        if (validateOnBlur == Boolean.TRUE) {
             json.put("validateOn", "blur");
         } else {
             json.remove("validateOn");
@@ -330,8 +337,8 @@ public abstract class Component<T extends Component<T,V>,V> {
         return (T) this;
     }
 
-    public T modalEdit(boolean modalEdit) {
-        if (modalEdit) {
+    public T modalEdit(Boolean modalEdit) {
+        if (modalEdit == Boolean.TRUE) {
             json.put("modalEdit", true);
         } else {
             json.remove("modalEdit");
@@ -375,7 +382,9 @@ public abstract class Component<T extends Component<T,V>,V> {
      * @return
      */
     public T customValidation(String custom) {
-        validate.put("custom", custom);
+        if (custom != null) {
+            validate.put("custom", custom);
+        }
         return (T) this;
     }
 
@@ -384,6 +393,15 @@ public abstract class Component<T extends Component<T,V>,V> {
             customValidation("valid = (data['" + dependentOnKey + "'] && !data['" + key +
                     "']) ? 'required' : true;");
         }
+    }
+
+    public JSONObject toJSONObject() {
+        if (!(this instanceof Container)) {
+            addMultipleValidation();
+        }
+        addDependOnComponentValidation();
+        json.put("validate", validate);
+        return json;
     }
 
     private void addMultipleValidation() {
