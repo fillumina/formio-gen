@@ -98,16 +98,6 @@ public class FormResponse {
         return true;
     }
 
-    public String toStringOld() {
-        StringBuilder buf = new StringBuilder();
-        map.forEach((k,v) ->
-                buf.append(" ").append(k).append(": ").append(v.toString()).append("\n"));
-        return "FormResponse: " + (errorPresent ? "" : "no ") + "error present\n" +
-                metadata + "\nData:\n" +
-                buf.toString() +
-                getJsonObject().toString(4);
-    }
-
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
