@@ -115,8 +115,8 @@ public class FormResponse {
                 buf.append(" ").append(k).append(": ").append(v.toString()).append("\n"));
 
         return "FormResponse: " + (errorPresent ? "" : "no ") + "error present\n" +
-                metadata + "\nData:\n" +
-                buf.toString() +
-                getJsonObject().toString(4);
+                metadata +
+                "\nFlat Data:\n" + buf.toString() +
+                "Regenerated Json:\n" + getJsonObject().toString(4);
     }
 }
