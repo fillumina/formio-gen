@@ -20,7 +20,6 @@ import org.json.JSONObject;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-// TODO insert data management containers (datagrid and datamap)
 public class FormBuilder {
 
     private final String id;
@@ -57,8 +56,8 @@ public class FormBuilder {
             if (c.isValue()) {
                 allComponents.put(c.getKey(), c);
             }
-            if (c instanceof AbstractNonValueComponent) {
-                ((AbstractNonValueComponent)c).addComponentsToMap(allComponents);
+            if (c instanceof Container) {
+                ((Container)c).addComponentsToMap(allComponents);
             }
         }
         return new Form(id, jsonObject, allComponents);

@@ -1,5 +1,6 @@
 package com.fillumina.formio.gen;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.json.JSONObject;
@@ -47,6 +48,23 @@ public class FormResponse {
         return map;
     }
 
+    public Map<String, ResponseValue> getFlatMap() {
+        Map<String, ResponseValue> flatMap = new LinkedHashMap<>();
+        recursiveAddResponseValue("", flatMap);
+        return flatMap;
+    }
+
+    /* package */ void recursiveAddResponseValue(
+            String prefix, Map<String, ResponseValue> flatMap) {
+        map.forEach((n,v) -> {
+            if (v instanceof ResponseArray) {
+                ((ResponseArray)v).addResponseValue(flatMap);
+            } else {
+                flatMap.put(prefix + v.getPath(), v);
+            }
+        });
+    }
+
     public boolean isErrorPresent() {
         return errorPresent;
     }
@@ -80,11 +98,22 @@ public class FormResponse {
         return true;
     }
 
-    @Override
-    public String toString() {
+    public String toStringOld() {
         StringBuilder buf = new StringBuilder();
         map.forEach((k,v) ->
                 buf.append(" ").append(k).append(": ").append(v.toString()).append("\n"));
+        return "FormResponse: " + (errorPresent ? "" : "no ") + "error present\n" +
+                metadata + "\nData:\n" +
+                buf.toString() +
+                getJsonObject().toString(4);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        getFlatMap().forEach((k,v) ->
+                buf.append(" ").append(k).append(": ").append(v.toString()).append("\n"));
+
         return "FormResponse: " + (errorPresent ? "" : "no ") + "error present\n" +
                 metadata + "\nData:\n" +
                 buf.toString() +

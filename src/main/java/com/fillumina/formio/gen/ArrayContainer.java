@@ -9,7 +9,7 @@ import org.json.JSONArray;
  */
 public abstract class ArrayContainer<T extends ArrayContainer<T>> extends Container<T> {
 
-    private final JSONArray components;
+    protected final JSONArray components;
 
     protected ArrayContainer(String type, String key) {
         super(type, key);

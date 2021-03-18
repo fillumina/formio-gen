@@ -27,7 +27,7 @@ public class DateTimeComponent extends Component<DateTimeComponent, XMLGregorian
     //https://stackoverflow.com/a/60214805/203204
     @Override
     public XMLGregorianCalendar convert(Object obj) throws ParseException {
-        if (obj == null) {
+        if (obj == null || obj.toString().isBlank()) {
             return null;
         }
         final String str = obj.toString();
@@ -56,11 +56,11 @@ public class DateTimeComponent extends Component<DateTimeComponent, XMLGregorian
                 Date date = toDate(cal);
                 if (date != null) {
                     if (minDate != null && date.before(minDate)) {
-                        return new ResponseValue(getKey(), list, isSingleton(),
+                        return new ResponseValue(getKey(),  getPath(), list, isSingleton(),
                                 FormError.DATE_BEFORE_MIN);
                     }
                     if (maxDate != null && date.after(maxDate)) {
-                        return new ResponseValue(getKey(), list, isSingleton(),
+                        return new ResponseValue(getKey(),  getPath(), list, isSingleton(),
                                 FormError.DATE_AFTER_MAX);
                     }
                 }

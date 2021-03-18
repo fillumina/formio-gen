@@ -10,22 +10,22 @@ import org.junit.jupiter.api.Test;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class IntegerComponentTest {
-    
+
     @Test
     public void shouldRejectValue() {
         IntegerComponent comp = new IntegerComponent("int123");
         ResponseValue cv = comp.validate("12.34");
         assertEquals(FormError.PARSE_EXCEPTION, cv.getError());
         assertTrue(cv.isErrorPresent());
-    }    
-            
+    }
+
     @Test
     public void shouldAcceptValue() {
         IntegerComponent comp = new IntegerComponent("int123");
         ResponseValue cv = comp.validate("1234");
         assertFalse(cv.isErrorPresent());
-    }    
-    
+    }
+
     @Test
     public void shouldAcceptMinMax() {
         IntegerComponent comp = new IntegerComponent("int123");
@@ -33,8 +33,8 @@ public class IntegerComponentTest {
         comp.max(20);
         ResponseValue cv = comp.validate("12");
         assertFalse(cv.isErrorPresent());
-    }    
-    
+    }
+
     @Test
     public void shouldRejectMin() {
         IntegerComponent comp = new IntegerComponent("int123");
@@ -42,8 +42,8 @@ public class IntegerComponentTest {
         ResponseValue cv = comp.validate("2");
         assertEquals(FormError.MIN_VALUE, cv.getError());
         assertTrue(cv.isErrorPresent());
-    }    
-    
+    }
+
     @Test
     public void shouldRejectMax() {
         IntegerComponent comp = new IntegerComponent("int123");
@@ -51,6 +51,6 @@ public class IntegerComponentTest {
         ResponseValue cv = comp.validate("12");
         assertEquals(FormError.MAX_VALUE, cv.getError());
         assertTrue(cv.isErrorPresent());
-    }    
-    
+    }
+
 }

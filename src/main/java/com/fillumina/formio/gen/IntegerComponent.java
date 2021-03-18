@@ -44,14 +44,16 @@ public class IntegerComponent extends Component<IntegerComponent, BigInteger> {
 
     @Override
     protected ResponseValue innerValidate(List<BigInteger> list) {
-        for (BigInteger integer : list) {
-            if (min != null && integer.compareTo(min) <= -1) {
-                return new ResponseValue(getKey(), list, isSingleton(),
-                        FormError.MIN_VALUE, integer.toString());
-            }
-            if (max != null && integer.compareTo(max) >= 1) {
-                return new ResponseValue(getKey(), list, isSingleton(),
-                        FormError.MAX_VALUE, integer.toString());
+        if (list != null) {
+            for (BigInteger integer : list) {
+                if (min != null && integer.compareTo(min) <= -1) {
+                    return new ResponseValue(getKey(),  getPath(), list, isSingleton(),
+                            FormError.MIN_VALUE, integer.toString());
+                }
+                if (max != null && integer.compareTo(max) >= 1) {
+                    return new ResponseValue(getKey(),  getPath(), list, isSingleton(),
+                            FormError.MAX_VALUE, integer.toString());
+                }
             }
         }
         return super.innerValidate(list);
@@ -75,5 +77,5 @@ public class IntegerComponent extends Component<IntegerComponent, BigInteger> {
             throw new ParseException(e.getMessage(), 0);
         }
     }
-    
+
 }

@@ -1,11 +1,8 @@
 package com.fillumina.formio.gen;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -21,8 +18,6 @@ import org.json.JSONObject;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-// TODO insert data management containers (datagrid and datamap)
-// TODO insert conditional display
 public class Form {
 
     private final String id;
@@ -40,42 +35,14 @@ public class Form {
      * Validates a json string against the rules specified in this form.
      */
     public FormResponse validateJson(String jsonText) {
-        JSONObject json = new JSONObject(jsonText);
-        return validateJson(json);
+        return JsonResponseValidator.validateJson(allComponents, json);
     }
 
     /**
      * Validates a {@link JSONObject} against the rules specified in this form.
      */
     public FormResponse validateJson(JSONObject json) {
-        boolean errorPresent = false;
-        Map<String, ResponseValue> responseMap = new LinkedHashMap<>();
-
-        for (Entry<String, Component<?, ?>> entry : allComponents.entrySet()) {
-            String key = entry.getKey();
-            Component<?, ?> component = entry.getValue();
-
-            Object value;
-            try {
-                value = json.get(key);
-            } catch (JSONException ex) {
-                if (component.isValue() && component.isRequired()) {
-                    errorPresent = true;
-                    ResponseValue response = new ResponseValue(key, null,
-                            component.isSingleton(),
-                            FormError.MISSING, key);
-                    responseMap.put(key, response);
-                }
-                continue;
-            }
-            ResponseValue response = component.validate(value);
-            if (response.isErrorPresent()) {
-                errorPresent = true;
-            }
-            responseMap.put(key, response);
-        }
-
-        return new FormResponse(Metadata.EMPTY, responseMap, errorPresent);
+        return JsonResponseValidator.validateJson(allComponents, json);
     }
 
     /**
@@ -89,7 +56,7 @@ public class Form {
         JSONObject jsonObject = new JSONObject(jsonText);
         JSONObject data = jsonObject.getJSONObject("data");
         Metadata metadata = new Metadata(jsonObject);
-        FormResponse response = validateJson(data);
+        FormResponse response = JsonResponseValidator.validateJson(allComponents, data);
         return response.withMetadata(metadata);
     }
 
@@ -114,4 +81,5 @@ public class Form {
         JSONUtils.setValuesToProperty(array, values, "defaultValue");
         return data;
     }
+
 }

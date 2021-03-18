@@ -1,10 +1,19 @@
 package com.fillumina.formio.gen;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class DataGridContainer extends ArrayContainer<DataGridContainer> {
+
+    private final Map<String, Component<?, ?>> componentMap = new LinkedHashMap<>();
 
     public DataGridContainer(String key) {
         super("datagrid", key);
@@ -12,6 +21,34 @@ public class DataGridContainer extends ArrayContainer<DataGridContainer> {
         json.put("tableView", true);
         json.put("input", true);
         json.put("tree", true);
+    }
+
+    @Override
+    public DataGridContainer addComponent(Component<?, ?>... componentArray) {
+        for (Component<?,?> component : componentArray) {
+            final String key = component.getKey();
+            componentMap.put(key, component);
+        }
+        return super.addComponent(componentArray);
+    }
+
+    @Override
+    protected void addComponentsToMap(Map<String, Component<?, ?>> allComponents) {
+        // stop validation here, manages validation of sub components by itself
+        allComponents.put(getKey(), this);
+    }
+
+    @Override
+    public ResponseValue validate(Object value) {
+        JSONArray array = (JSONArray) value;
+        List<FormResponse> list = new ArrayList<>();
+        for (Object obj : array) {
+            JSONObject json = (JSONObject) obj;
+            FormResponse response =
+                    JsonResponseValidator.validateJson(componentMap, json);
+            list.add(response);
+        }
+        return new ResponseArray(getKey(), getPath(), List.of(), false, list);
     }
 
     public DataGridContainer addAnotherText(String text) {

@@ -26,10 +26,12 @@ public class EnumComponent extends StringComponent<EnumComponent> {
 
     @Override
     protected ResponseValue innerValidate(List<String> list) {
-        for (String s : list) {
-            if (!validValues.contains(s)) {
-                return new ResponseValue(getKey(), list, isSingleton(),
-                        FormError.ENUM_ITEM_NOT_PRESENT, s);
+        if (list != null) {
+            for (String s : list) {
+                if (!validValues.contains(s)) {
+                    return new ResponseValue(getKey(),  getPath(), list, isSingleton(),
+                            FormError.ENUM_ITEM_NOT_PRESENT, s);
+                }
             }
         }
         return super.innerValidate(list);

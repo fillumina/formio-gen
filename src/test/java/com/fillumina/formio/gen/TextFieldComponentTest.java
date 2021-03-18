@@ -66,7 +66,7 @@ public class TextFieldComponentTest {
         assertEquals(FormError.LENGTH_TOO_LONG, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
-    
+
     @Test
     public void shouldRejectTooFewMultiplicity() {
         TextFieldComponent text = new TextFieldComponent("txt123");
@@ -75,37 +75,40 @@ public class TextFieldComponentTest {
         assertEquals(FormError.MULTIPLE_VALUES_TOO_FEW, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
-    
+
     @Test
     public void shouldRejectTooManyMultiplicity() {
         TextFieldComponent text = new TextFieldComponent("txt123");
         text.maxItems(3);
         ResponseValue cv = text.validate(
-                new JSONArray(Arrays.asList("Hello","world", "this", "is", "me")));
+                new JSONArray(Arrays.asList("Hello","world", "this", "is", "me")))
+                ;
         assertEquals(FormError.MULTIPLE_VALUES_TOO_MANY, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
-    
+
     @Test
     public void shouldRejectMultipleFields() {
         TextFieldComponent text = new TextFieldComponent("txt123");
         ResponseValue cv = text.validate(
-                new JSONArray(Arrays.asList("Hello","world", "this", "is", "me")));
+                new JSONArray(Arrays.asList("Hello","world", "this", "is", "me")))
+                ;
         assertEquals(FormError.MULTIPLE_VALUES, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
-    
+
     @Test
     public void shouldRejectStringTooShortInMultipleFields() {
         TextFieldComponent text = new TextFieldComponent("txt123");
         text.multiple(true);
         text.minLength(4);
         ResponseValue cv = text.validate(
-                new JSONArray(Arrays.asList("Hello","world", "this", "is", "me")));
+                new JSONArray(Arrays.asList("Hello","world", "this", "is", "me")))
+                ;
         assertEquals(FormError.LENGTH_TOO_SHORT, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
-    
+
     @Test
     public void shouldRejectWrongPattern() {
         TextFieldComponent text = new TextFieldComponent("txt123");
@@ -114,7 +117,7 @@ public class TextFieldComponentTest {
         assertEquals(FormError.PATTERN_NOT_MATCHING, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
-    
+
     @Test
     public void shouldAcceptGoodPattern() {
         TextFieldComponent text = new TextFieldComponent("txt123");
@@ -122,7 +125,7 @@ public class TextFieldComponentTest {
         ResponseValue cv = text.validate("abcdef");
         assertFalse(cv.isErrorPresent());
     }
-    
+
     @Test
     public void shouldCheckExternalValidator() {
         TextFieldComponent text = new TextFieldComponent("txt123");
@@ -131,5 +134,5 @@ public class TextFieldComponentTest {
         assertEquals(FormError.EXTERNAL_VALIDATOR, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
-    
+
 }

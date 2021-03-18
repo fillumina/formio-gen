@@ -29,6 +29,9 @@ public abstract class Component<T extends Component<T,V>,V> {
 
     private String dependentOnKey;
 
+    /** This is an optional component to create flat map of options. */
+    private String path;
+
     public Component(String type, String key) {
         this.key = key;
         this.json = new JSONObject();
@@ -42,13 +45,23 @@ public abstract class Component<T extends Component<T,V>,V> {
     /** The object might be already in the right format or should convert from {@code String}. */
     public abstract V convert(Object s) throws ParseException;
 
-    protected boolean isRequired() {
+    public boolean isRequired() {
         return required == Boolean.TRUE;
     }
 
     /** Containers don't return values. */
-    protected boolean isValue() {
+    public boolean isValue() {
         return true;
+    }
+
+    /** Used to return flat map of options. */
+    public T path(String path) {
+        this.path = path;
+        return (T) this;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public T externalValidator(Function<V,Object> validator) {
@@ -64,7 +77,8 @@ public abstract class Component<T extends Component<T,V>,V> {
 
     /**
      *
-     * @param value can be a java object (like BigDecimal or String) or a JSONArray
+     * @param value can be a java object (like BigDecimal or String) or a {@link JSONArray} in case
+     * of multiple properties or a {@link JSONObject} in case of
      * @return
      */
     public ResponseValue validate(Object value) {
@@ -73,38 +87,45 @@ public abstract class Component<T extends Component<T,V>,V> {
         try {
             list = toList(value);
         } catch (ParseException e) {
-            return new ResponseValue(key, List.of(e.getMessage()), singleton,
+            return new ResponseValue(key, path, List.of(e.getMessage()), singleton,
                     FormError.PARSE_EXCEPTION);
         }
         if ((required == Boolean.TRUE || (minLength != null && minLength > 0)) &&
                 (list == null || list.stream().anyMatch(o -> o == null)) ) {
-            return new ResponseValue(key, list, singleton, FormError.NULL_VALUE);
+            return new ResponseValue(key, path, list, singleton,
+                    FormError.NULL_VALUE);
         }
         if (list != null) {
             if (multiple == Boolean.FALSE && list.size() > 1) {
-                return new ResponseValue(key, list, singleton, FormError.MULTIPLE_VALUES);
+                return new ResponseValue(key, path, list, singleton,
+                        FormError.MULTIPLE_VALUES);
             }
             if (minItems != null && list.size() < minItems) {
-                return new ResponseValue(key, list, singleton, FormError.MULTIPLE_VALUES_TOO_FEW);
+                return new ResponseValue(key, path, list, singleton,
+                        FormError.MULTIPLE_VALUES_TOO_FEW);
             }
             if (maxItems != null && list.size() > maxItems) {
-                return new ResponseValue(key, list, singleton, FormError.MULTIPLE_VALUES_TOO_MANY);
+                return new ResponseValue(key, path, list, singleton,
+                        FormError.MULTIPLE_VALUES_TOO_MANY);
             }
             if (minLength != null && list.stream().anyMatch(o -> o.toString().length() < minLength)) {
-                return new ResponseValue(key, list, singleton, FormError.LENGTH_TOO_SHORT);
+                return new ResponseValue(key, path, list, singleton,
+                        FormError.LENGTH_TOO_SHORT);
             }
             if (maxLength != null && list.stream().anyMatch(o -> o.toString().length() > maxLength)) {
-                return new ResponseValue(key, list, singleton, FormError.LENGTH_TOO_LONG);
+                return new ResponseValue(key, path, list, singleton,
+                        FormError.LENGTH_TOO_LONG);
             }
             if (pattern != null &&
                     list.stream().anyMatch(o -> !pattern.matcher(o.toString()).matches() ) ) {
-                return new ResponseValue(key, list, singleton, FormError.PATTERN_NOT_MATCHING);
+                return new ResponseValue(key, path, list, singleton,
+                        FormError.PATTERN_NOT_MATCHING);
             }
             if (externalValidator != null) {
                 for (V v : list) {
                     Object error = externalValidator.apply(v);
                     if (error != null) {
-                        return new ResponseValue(key, list, singleton,
+                        return new ResponseValue(key, path, list, singleton,
                                 FormError.EXTERNAL_VALIDATOR, error.toString());
                     }
                 }
@@ -119,11 +140,11 @@ public abstract class Component<T extends Component<T,V>,V> {
      */
     protected ResponseValue innerValidate(List<V> list) {
         // return no error result
-        return new ResponseValue(key, list, isSingleton());
+        return new ResponseValue(key, path, list, isSingleton());
     }
 
     private List<V> toList(Object value) throws ParseException {
-        if (value == null) {
+        if (value == null || value.toString().isBlank()) {
             return null;
         }
         if (value instanceof JSONArray) {
@@ -255,6 +276,7 @@ public abstract class Component<T extends Component<T,V>,V> {
         if (minItems != null) {
             validate.put("minItems", minItems);
             if (minItems > 0) {
+                required(true);
                 multiple(true);
             }
         }

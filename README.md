@@ -13,8 +13,7 @@ Helper to generate a JSON form description for the [formio](https://github.com/f
 
 ### To do
 
- * Add data containers support such as data grid and data map
- * Add conditional display to components
+ * Add tests
 
 ### Usage example
 

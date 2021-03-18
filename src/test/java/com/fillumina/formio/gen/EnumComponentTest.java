@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class EnumComponentTest {
-            
+
     @Test
     public void shouldRejectWrongSelection() {
         EnumComponent comp = new EnumComponent("txt123");
@@ -19,7 +19,7 @@ public class EnumComponentTest {
         assertEquals(FormError.ENUM_ITEM_NOT_PRESENT, cv.getError());
         assertTrue(cv.isErrorPresent());
     }
-            
+
     @Test
     public void shouldAcceptGoodSelection() {
         EnumComponent comp = new EnumComponent("txt123");

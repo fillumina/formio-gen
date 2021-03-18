@@ -33,6 +33,7 @@ public class App {
 
     private void parseJsonResponse(String response) {
         System.out.println("RECEIVED JSON: " + response);
+        System.out.println("\nPARSED JSON: " + new JSONObject(response).toString(4));
 
         // show parsed response
         FormResponse formResponse = form.validateJsonFromFormio(response);

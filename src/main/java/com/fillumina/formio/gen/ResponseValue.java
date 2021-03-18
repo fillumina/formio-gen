@@ -13,26 +13,33 @@ import org.json.JSONArray;
 public class ResponseValue {
 
     private final String key;
+    private final String path;
     private final List<?> values;
     private final boolean singleton;
     private final FormError error;
     private final Object[] validationParameters;
 
-    public ResponseValue(String key, List<?> values, boolean singleton) {
+    public ResponseValue(String key, String path, List<?> values, boolean singleton) {
         this.key = key;
+        this.path = path;
         this.values = values;
         this.singleton = singleton;
         this.error = null;
         this.validationParameters = null;
     }
 
-    public ResponseValue(String key, List<?> values, boolean singleton, FormError error,
-            Object... validationParameters) {
+    public ResponseValue(String key, String path, List<?> values, boolean singleton,
+            FormError error, Object... validationParameters) {
         this.key = key;
+        this.path = path;
         this.values = values;
         this.singleton = singleton;
         this.error = error;
         this.validationParameters = validationParameters;
+    }
+
+    public String getPath() {
+        return path != null ? path : key;
     }
 
     public boolean isErrorPresent() {

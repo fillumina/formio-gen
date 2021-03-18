@@ -37,22 +37,21 @@ public class FormCreator {
                 .label("Name")
                 .placeholder("Tell your name")
                 .required(true));
-        builder.addComponent(new WysiwygComponent("area123", true)
+        builder.addComponent(new WysiwygComponent("area123", false)
                 .label("Comment")
                 .placeholder("Say something about you")
-                .rows(5)
                 .required(false)
                 .showCharCount(true));
-        builder.addComponent(new DataGridContainer("panel123")
+        builder.addComponent(new DataGridContainer("datagrid123")
                 .label("Panel 1")
                 .multiple(true) // multiple doesn't work
                 .minItems(1)
                 .maxItems(3)
-                .addComponent(new BooleanComponent("bool_2")
+                .addComponent(new BooleanComponent("bool_multiple")
                         .label("inside the fieldset"))
-                .addComponent(new TextFieldComponent("tf123")
+                .addComponent(new TextFieldComponent("text_multiple")
                         .label("In the panel")
-                        .disabled(true)
+                        .disabled(false)
                         .maxLength(20)
                         .minLength(1)));
         builder.addComponent(new ColumnsContainer("col123")

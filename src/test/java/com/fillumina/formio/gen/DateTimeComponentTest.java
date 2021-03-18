@@ -79,7 +79,7 @@ public class DateTimeComponentTest {
     private static Date getNowAsDate(int days) {
         return new Date(new Date().getTime() + days * (24 * 60 * 60 * 1000));
     }
-    
+
     private Date convert(String s, String format) throws ParseException {
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DateFormat df = new SimpleDateFormat(format);
@@ -87,5 +87,5 @@ public class DateTimeComponentTest {
         Date date = df.parse(s);
         return date;
     }
-    
+
 }
