@@ -66,7 +66,7 @@ public class FormTest {
         assertFalse(response.isErrorPresent());
 
         ResponseValue componentResponse = response.getMap().get(id);
-        assertEquals(content, componentResponse.getValues().get(0));
+        assertEquals(content, componentResponse.getValueList().get(0));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class FormTest {
         assertFalse(response.isErrorPresent());
 
         ResponseValue componentResponse = response.getMap().get(id);
-        final List<?> values = componentResponse.getValues();
+        final List<?> values = componentResponse.getValueList();
         assertEquals(2, values.size());
         assertEquals("hello world", values.get(0));
         assertEquals("this is me", values.get(1));
@@ -124,6 +124,6 @@ public class FormTest {
     }
 
     private static List<?> extractValue(FormResponse response, String key) {
-        return response.getMap().get(key).getValues();
+        return response.getMap().get(key).getValueList();
     }
 }

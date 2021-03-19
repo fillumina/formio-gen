@@ -54,8 +54,15 @@ public class ResponseValue {
         return key;
     }
 
-    public List<?> getValues() {
+    public List<?> getValueList() {
         return values;
+    }
+
+    public Object getValue() {
+       if (values == null || values.isEmpty() || values.get(0) == null) {
+           return null;
+       }
+       return values.get(0);
     }
 
     public FormError getError() {

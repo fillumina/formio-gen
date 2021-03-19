@@ -10,7 +10,7 @@ import org.owasp.html.PolicyFactory;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class StringComponent<T extends StringComponent<T>> extends Component<T, String> {
-    
+
     //https://github.com/OWASP/java-html-sanitizer#prepackaged-policies
     private static final PolicyFactory FORBID_ALL_TAGS = new HtmlPolicyBuilder()
             .allowElements()
@@ -18,9 +18,16 @@ public class StringComponent<T extends StringComponent<T>> extends Component<T, 
             .allowAttributes().onElements()
             .requireRelNofollowOnLinks()
             .toFactory();
-    
+
     protected StringComponent(String type, String key) {
         super(type, key);
+    }
+
+    public T spellcheck(Boolean spellecheck) {
+        if (spellecheck == Boolean.TRUE) {
+            json.put("spellecheck", spellecheck);
+        }
+        return (T) this;
     }
 
     public T upperCase() {
@@ -37,7 +44,7 @@ public class StringComponent<T extends StringComponent<T>> extends Component<T, 
         json.put("case", "mixed");
         return (T) this;
     }
-    
+
     /** Minimum amount of words that can be added. */
     public T minWords(int minWords) {
         validate.put("minWords", minWords);
@@ -49,17 +56,17 @@ public class StringComponent<T extends StringComponent<T>> extends Component<T, 
         validate.put("maxWords", maxWords);
         return (T) this;
     }
-    
+
     public T showWordCount(boolean showWordCount) {
         json.put("showWordCount", showWordCount);
         return (T) this;
     }
-    
+
     public T showCharCount(boolean showCharCount) {
         json.put("showCharCount", showCharCount);
         return (T) this;
     }
-    
+
     @Override
     public String convert(Object obj) throws ParseException {
         if (obj == null) {

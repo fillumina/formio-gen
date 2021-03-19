@@ -166,6 +166,27 @@ public abstract class Component<T extends Component<T,V>,V> {
         return key;
     }
 
+    public T hidden(Boolean hidden) {
+        if (hidden == Boolean.TRUE) {
+            json.put("hidden", hidden);
+        }
+        return (T) this;
+    }
+
+    public T dataGridLabel(Boolean dataGridLabel) {
+        if (dataGridLabel == Boolean.TRUE) {
+            json.put("dataGridLabel", dataGridLabel);
+        }
+        return (T) this;
+    }
+
+    public T autofocus(Boolean autofocus) {
+        if (autofocus == Boolean.TRUE) {
+            json.put("autofocus", autofocus);
+        }
+        return (T) this;
+    }
+
     public T defaultValue(Object object) {
         json.put("defaultValue", object);
         return (T) this;
