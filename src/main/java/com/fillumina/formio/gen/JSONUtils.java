@@ -24,10 +24,17 @@ public class JSONUtils {
     }
 
     /**
+     * Adds the {@code propertyName} property to the {@code json} object according to what
+     * specified in {@code values} which is an object where:
+     * <ul>
+     * <li>key: specify the object to modify
+     * <li>value: specify the value to add to the property {@code propertyName}
+     * </ul>
      *
      * @param json can be a JSONObject or a JSONArray
-     * @param values the values that are to set
+     * @param values the values that are to set (i.e. {@code { "alpha": true, "beta": false } })
      * @param propertyName the properties in the target object that should be set with the value
+     *        (i.e. {@code 'disable'}).
      */
     public static void setValuesToProperty(Object json, JSONObject values, String propertyName) {
         Set<String> valueKeys = values.keySet();
