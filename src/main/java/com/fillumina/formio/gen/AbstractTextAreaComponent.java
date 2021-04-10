@@ -4,7 +4,8 @@ package com.fillumina.formio.gen;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class AbstractTextAreaComponent<T extends StringComponent<T>> extends StringComponent<T> {
+public abstract class AbstractTextAreaComponent<T extends StringComponent<T>>
+        extends StringComponent<T> {
 
     protected AbstractTextAreaComponent(String key) {
         super("textarea", key);
