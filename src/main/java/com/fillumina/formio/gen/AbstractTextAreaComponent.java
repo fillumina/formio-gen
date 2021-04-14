@@ -9,7 +9,7 @@ public abstract class AbstractTextAreaComponent<T extends StringComponent<T>>
 
     protected AbstractTextAreaComponent(String key) {
         super("textarea", key);
-        json.put("row", 1);
+        rows(1);
     }
 
     public T allowSpellCheck(boolean spellcheck) {
