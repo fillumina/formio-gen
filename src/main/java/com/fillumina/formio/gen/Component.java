@@ -2,6 +2,7 @@ package com.fillumina.formio.gen;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -87,8 +88,8 @@ public abstract class Component<T extends Component<T,V>,V> {
         try {
             list = toList(value);
         } catch (ParseException e) {
-            return new ResponseValue(key, path, List.of(e.getMessage()), singleton,
-                    FormError.PARSE_EXCEPTION);
+            return new ResponseValue(key, path, Collections.singletonList(e.getMessage()),
+                    singleton, FormError.PARSE_EXCEPTION);
         }
         if ((required == Boolean.TRUE || (minLength != null && minLength > 0)) &&
                 (list == null || list.stream().anyMatch(o -> o == null)) ) {
@@ -144,7 +145,7 @@ public abstract class Component<T extends Component<T,V>,V> {
     }
 
     private List<V> toList(Object value) throws ParseException {
-        if (value == null || value.toString().isBlank()) {
+        if (value == null || value.toString().trim().isEmpty()) {
             return null;
         }
         if (value instanceof JSONArray) {
@@ -159,7 +160,7 @@ public abstract class Component<T extends Component<T,V>,V> {
             return list;
         }
         V convert = convert(value);
-        return convert == null ? null : List.of(convert);
+        return convert == null ? null : Collections.singletonList(convert);
     }
 
     public String getKey() {

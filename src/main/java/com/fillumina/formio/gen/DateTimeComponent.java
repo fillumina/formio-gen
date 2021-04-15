@@ -27,7 +27,7 @@ public class DateTimeComponent extends Component<DateTimeComponent, XMLGregorian
     //https://stackoverflow.com/a/60214805/203204
     @Override
     public XMLGregorianCalendar convert(Object obj) throws ParseException {
-        if (obj == null || obj.toString().isBlank()) {
+        if (obj == null || obj.toString().trim().isEmpty()) {
             return null;
         }
         final String str = obj.toString();

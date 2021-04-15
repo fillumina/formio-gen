@@ -2,6 +2,7 @@ package com.fillumina.formio.gen;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -97,7 +98,7 @@ public class FormTest {
         json.put("bool123", false);
         json.put("dt123", "2021-03-11T00:00:00+01:00");
         json.put("enum123", "Male");
-        json.put("float123", new JSONArray(List.of(12.3, 24.6)));
+        json.put("float123", new JSONArray(Arrays.asList(12.3, 24.6)));
         json.put("text123", "Elementare whatson");
         json.put("area123", "Nel mezzo del cammin di nostra vita");
         json.put("int123", 12);
@@ -113,7 +114,7 @@ public class FormTest {
                 extractValue(response, "dt123").get(0).toString());
         assertEquals("Male",
                 extractValue(response, "enum123").get(0));
-        assertEquals(List.of(BigDecimal.valueOf(12.3), BigDecimal.valueOf(24.6)),
+        assertEquals(Arrays.asList(BigDecimal.valueOf(12.3), BigDecimal.valueOf(24.6)),
                 extractValue(response, "float123"));
         assertEquals("Elementare whatson",
                 extractValue(response, "text123").get(0));

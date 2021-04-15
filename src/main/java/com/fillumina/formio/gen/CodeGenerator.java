@@ -1,7 +1,10 @@
 package com.fillumina.formio.gen;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -128,8 +131,13 @@ public class CodeGenerator {
         for (String lang : languages) {
             try (InputStream is = CodeGenerator.class
                     .getResourceAsStream("/translation_" + lang + ".txt")) {
-                String txt = new String(is.readAllBytes());
-                list.add(txt);
+                try (InputStreamReader isr =
+                        new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                    String txt = new BufferedReader(isr)
+                        .lines()
+                        .collect(Collectors.joining("\n"));
+                    list.add(txt);
+                }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }

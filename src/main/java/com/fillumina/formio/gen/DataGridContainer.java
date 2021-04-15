@@ -1,6 +1,7 @@
 package com.fillumina.formio.gen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,8 @@ public class DataGridContainer extends ArrayContainer<DataGridContainer> {
                     JsonResponseValidator.validateJson(componentMap, json);
             list.add(response);
         }
-        return new ResponseArray(getKey(), getPath(), List.of(), false, list);
+        return new ResponseArray(getKey(), getPath(),
+                Collections.emptyList(), false, list);
     }
 
     public DataGridContainer addAnotherText(String text) {
