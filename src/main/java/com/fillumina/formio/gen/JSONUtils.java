@@ -225,6 +225,12 @@ public class JSONUtils {
      * @return
      */
     public static JSONObject mergeFlat(JSONObject obj1, JSONObject obj2) {
+        if (obj2.isEmpty()) {
+            return obj1;
+        }
+        if (obj1.isEmpty()) {
+            return obj2;
+        }
         JSONObject merged = new JSONObject(obj1, JSONObject.getNames(obj1));
         for (String key : JSONObject.getNames(obj2)) {
             merged.put(key, obj2.get(key));
@@ -240,6 +246,12 @@ public class JSONUtils {
      * @return
      */
     public static JSONObject removeFlat(JSONObject obj1, JSONObject obj2) {
+        if (obj2.isEmpty()) {
+            return obj1;
+        }
+        if (obj1.isEmpty()) {
+            return obj1;
+        }
         Set<String> obj1Names = new HashSet<>(Arrays.asList(JSONObject.getNames(obj1)));
         Set<String> obj2Names = new HashSet<>(Arrays.asList(JSONObject.getNames(obj2)));
         Set<String> obj1Copy = new HashSet<>(obj1Names);
