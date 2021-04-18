@@ -1,6 +1,7 @@
 package com.fillumina.formio.gen;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import org.json.JSONObject;
@@ -67,6 +68,18 @@ public class FormResponse {
 
     public boolean isErrorPresent() {
         return errorPresent;
+    }
+
+    public String getErrorMessage() {
+        StringBuilder buf = new StringBuilder();
+        map.forEach((name, response) -> {
+            if (response.isErrorPresent()) {
+                buf.append(name).append(": ")
+                        .append(response.getErrorDescription(Locale.ITALY))
+                        .append(System.lineSeparator());
+            }
+        });
+        return buf.toString();
     }
 
     @Override
