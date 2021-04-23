@@ -79,7 +79,9 @@ public class FormResponse {
         StringBuilder buf = new StringBuilder();
         map.forEach((name, response) -> {
             if (response.isErrorPresent()) {
-                buf.append(response.getErrorDescription(Locale.ITALY)).append("\n");
+                buf
+                        .append(name).append(": ")
+                        .append(response.getErrorDescription(Locale.ITALY)).append("\n");
             }
         });
         return buf.toString();
