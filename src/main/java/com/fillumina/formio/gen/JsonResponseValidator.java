@@ -49,7 +49,7 @@ public class JsonResponseValidator {
             }
 
             ResponseValue responseValue = component.validate(value);
-            errorPresent = responseValue.isErrorPresent();
+            errorPresent = errorPresent || responseValue.isErrorPresent();
             responseMap.put(responseValue.getKey(), responseValue);
         }
 
