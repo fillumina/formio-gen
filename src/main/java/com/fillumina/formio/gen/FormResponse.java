@@ -37,7 +37,12 @@ public class FormResponse {
     /** @return a json representation of its data. */
     public JSONObject getJsonObject() {
         JSONObject json = new JSONObject();
-        map.forEach((k,v) -> json.put(k, v.getJsonObject()) );
+        map.forEach((k,v) -> {
+            final Object value = v.getJsonObject();
+            if (value != null && !value.toString().isEmpty()) {
+                json.put(k, value);
+            }
+        });
         return json;
     }
 
