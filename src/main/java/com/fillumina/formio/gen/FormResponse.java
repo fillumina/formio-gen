@@ -75,13 +75,13 @@ public class FormResponse {
         return errorPresent;
     }
 
-    public String getErrorMessage() {
+    public String getErrorMessage(Locale locale) {
         StringBuilder buf = new StringBuilder();
         map.forEach((name, response) -> {
             if (response.isErrorPresent()) {
                 buf
                         .append(name).append(": ")
-                        .append(response.getErrorDescription(Locale.ITALY)).append("\n");
+                        .append(response.getErrorDescription(locale)).append("\n");
             }
         });
         return buf.toString();
