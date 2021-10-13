@@ -60,7 +60,7 @@ public class EnumComponent extends StringComponent<EnumComponent> {
     }
 
     public EnumComponent values(Map<String, String> values) {
-        this.validValues = new HashSet<>(values.keySet());
+        this.validValues = new HashSet<>(values.values());
         JSONArray dataValues = new JSONArray();
         values.forEach((k,v) -> dataValues.put(create(k, v)));
         data.put("values", dataValues);
