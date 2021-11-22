@@ -91,6 +91,7 @@ public class CodeGenerator {
 
     private static final String FOOTER =
             "    </script>\n" +
+            "    <style>.ql-container { height: 300px !important} </style>" +
             "  </head>\n" +
             "  <body>\n" +
             "    <div id='formio'></div>\n" +
