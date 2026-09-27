@@ -19,8 +19,22 @@ public class StringComponent<T extends StringComponent<T>> extends Component<T, 
             .requireRelNofollowOnLinks()
             .toFactory();
 
+    private final boolean sanitize;
+
     protected StringComponent(String type, String key) {
+        this(type, key, true);
+    }
+
+    /**
+     * @param sanitize false when the value is plain data rather than markup,
+     *                 such as an email address or a password. The sanitiser
+     *                 escapes whatever it keeps, so it turns an address into
+     *                 <pre>ada&#64;example.com</pre>, which corrupts the value
+     *                 and breaks any pattern mentioning an at sign.
+     */
+    protected StringComponent(String type, String key, boolean sanitize) {
         super(type, key);
+        this.sanitize = sanitize;
     }
 
     public T spellcheck(Boolean spellecheck) {
@@ -71,6 +85,9 @@ public class StringComponent<T extends StringComponent<T>> extends Component<T, 
     public String convert(Object obj) throws ParseException {
         if (obj == null) {
             return null;
+        }
+        if (!sanitize) {
+            return obj.toString();
         }
         // clean text from all dangerous code.
         String txt = obj.toString();
