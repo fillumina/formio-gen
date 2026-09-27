@@ -19,22 +19,8 @@ public class StringComponent<T extends StringComponent<T>> extends Component<T, 
             .requireRelNofollowOnLinks()
             .toFactory();
 
-    private final boolean sanitize;
-
     protected StringComponent(String type, String key) {
-        this(type, key, true);
-    }
-
-    /**
-     * @param sanitize false when the value is plain data rather than markup,
-     *                 such as an email address or a password. The sanitiser
-     *                 escapes whatever it keeps, so it turns an address into
-     *                 <pre>ada&#64;example.com</pre>, which corrupts the value
-     *                 and breaks any pattern mentioning an at sign.
-     */
-    protected StringComponent(String type, String key, boolean sanitize) {
         super(type, key);
-        this.sanitize = sanitize;
     }
 
     public T spellcheck(Boolean spellecheck) {
@@ -81,16 +67,26 @@ public class StringComponent<T extends StringComponent<T>> extends Component<T, 
         return (T) this;
     }
 
+    /**
+     * Strips markup out of the value and leaves everything else as the user
+     * typed it.
+     *
+     * <p>The sanitiser escapes whatever it keeps, so running it over a plain
+     * address turns it into {@code ada&#64;example.com}. That corrupts the
+     * value and breaks any pattern mentioning an at sign, so it is only
+     * applied when the value actually contains markup. Only a {@code <} can
+     * open a tag, so a value without one has nothing to strip, and a lone
+     * {@code >} cannot break out of anything.
+     */
     @Override
     public String convert(Object obj) throws ParseException {
         if (obj == null) {
             return null;
         }
-        if (!sanitize) {
-            return obj.toString();
-        }
-        // clean text from all dangerous code.
         String txt = obj.toString();
+        if (txt.indexOf('<') < 0) {
+            return txt;
+        }
         return FORBID_ALL_TAGS.sanitize(txt);
     }
 }
