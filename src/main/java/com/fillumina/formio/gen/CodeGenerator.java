@@ -18,16 +18,6 @@ import org.json.JSONObject;
 // TODO https://formio.github.io/formio.js/app/examples/htmlview.html  submission view
 public class CodeGenerator {
 
-    private static final String HTML_HEADER =
-            "<html>\n" +
-            "  <head>\n" +
-            "  <meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n" +
-            "  <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css\">\n" +
-            "  <link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\">\n" +
-            "  <link rel=\"stylesheet\" href=\"https://cdn.form.io/formiojs/formio.full.min.css\">\n" +
-            "  <script src=\"https://cdn.form.io/formiojs/formio.full.min.js\"></script>\n" +
-            "    <script type='text/javascript'>\n";
-
     private static final String JAVASCRIPT_START =
             "      window.onload = function() {\n" +
             "        Formio.icons = 'fontawesome';\n" +
@@ -98,16 +88,58 @@ public class CodeGenerator {
             "  </body>\n" +
             "</html>";
 
+    /**
+     * Generates a page for the formio.js 4.x line, the behaviour this class
+     * had before it could target more than one runtime.
+     *
+     * @see #generateHtml(JSONObject, String, boolean, FormioRuntime)
+     */
     public static String generateHtml(JSONObject object, String postUrl, boolean readOnly) {
+        return generateHtml(object, postUrl, readOnly, FormioRuntime.FORMIO_JS_4);
+    }
+
+    /**
+     * @param runtime the formio.js line the page loads, which also decides the
+     *                Bootstrap flavour and the icon font
+     * @return a standalone HTML page rendering the given form
+     */
+    public static String generateHtml(JSONObject object, String postUrl, boolean readOnly,
+            FormioRuntime runtime) {
         StringBuilder buf = new StringBuilder();
-        buf.append(HTML_HEADER);
-        buf.append(generateJavascript(object, postUrl, readOnly));
+        buf.append(generateHtmlHeader(runtime));
+        buf.append(generateJavascript(object, postUrl, readOnly, runtime));
         buf.append(FOOTER);
+        return buf.toString();
+    }
+
+    private static String generateHtmlHeader(FormioRuntime runtime) {
+        StringBuilder buf = new StringBuilder();
+        buf.append("<html>\n");
+        buf.append("  <head>\n");
+        buf.append("  <meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
+        String fontAwesome = runtime.fontAwesomeCssUrl();
+        if (fontAwesome != null) {
+            buf.append("  <link rel=\"stylesheet\" href=\"").append(fontAwesome).append("\">\n");
+        }
+        buf.append("  <link rel=\"stylesheet\" href=\"").append(runtime.bootstrapCssUrl())
+                .append("\">\n");
+        buf.append("  <link rel=\"stylesheet\" href=\"").append(runtime.cssUrl()).append("\">\n");
+        buf.append("  <script src=\"").append(runtime.jsUrl()).append("\"></script>\n");
+        buf.append("    <script type='text/javascript'>\n");
         return buf.toString();
     }
 
     public static String generateJavascript(
             JSONObject object, String postUrl, boolean readonly)
+            throws JSONException {
+        return generateJavascript(object, postUrl, readonly, FormioRuntime.FORMIO_JS_4);
+    }
+
+    /**
+     * @see #generateHtml(JSONObject, String, boolean, FormioRuntime)
+     */
+    public static String generateJavascript(
+            JSONObject object, String postUrl, boolean readonly, FormioRuntime runtime)
             throws JSONException {
         StringBuilder buf = new StringBuilder();
         buf.append(JAVASCRIPT_START);
@@ -116,7 +148,11 @@ public class CodeGenerator {
         if (readonly) {
             buf.append("  readOnly: true,\n");
         }
-        buf.append(generateLanguages("it", "en", "it"));
+        String theme = runtime.formioTheme();
+        if (theme != null) {
+            buf.append("  theme: '").append(theme).append("',\n");
+        }
+        buf.append(generateLanguages("en", "en", "it"));
         buf.append(CODE_START);
         buf.append(CODE_AFTER_DATA);
         buf.append(postUrl);

@@ -1,0 +1,7 @@
+formio-gen
+Copyright 2021-2026 Francesco Illuminati
+
+This product includes software developed by Form.io LLC, licensed under the
+MIT License. The generated HTML pages reference the formio.js bundles
+published at cdn.form.io and, for the 5.x line, distributed through the
+@formio/js package on npm. Those bundles are not part of this distribution.

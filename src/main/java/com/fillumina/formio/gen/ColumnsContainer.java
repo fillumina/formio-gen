@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 /**
  *
- * @author Francesco Illuminati <fillumina at gmail.com>
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class ColumnsContainer extends Container<ColumnsContainer> {
     

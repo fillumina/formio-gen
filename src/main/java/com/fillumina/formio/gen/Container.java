@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>ncesco Illuminati <fillumina at gmail.com>
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public class Container<T extends Container<T>> extends AbstractNonValueComponent<T> {
 

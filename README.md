@@ -2,18 +2,49 @@
 
 Helper to generate a JSON form description for the [formio](https://github.com/formio/formio) project and validate its returned data.
 
+Requires Java 17 or later.
+
 ### See
 
  * https://help.form.io/
  * https://github.com/formio/formio.js
  * https://formio.github.io/formio.js/app/examples/
- * https://formio.github.io/formio.js/docs/class/src/components/Components.js~Components.html
  * https://github.com/formio/formio.js/wiki/Form-JSON-Schema
  * https://formio.github.io/formio.js/app/sandbox
 
-### To do
+### Supported formio.js versions
 
- * Add tests
+The form JSON this library produces is the same for every formio.js version. A
+`FormioRuntime` only decides which script a generated page loads, and with which
+Bootstrap flavour:
+
+| `FormioRuntime` | formio.js | Bootstrap | served by |
+| --- | --- | --- | --- |
+| `FORMIO_JS_4` | 4.21.2 | 4 | cdn.form.io |
+| `FORMIO_JS_5` | 5.6.1 | 5 | jsdelivr, from the `@formio/js` npm package |
+
+Form.io stopped publishing formio.js 5.x to its own CDN, which is why the two
+lines come from different hosts. Pass a runtime to
+`CodeGenerator.generateHtml(form, postUrl, readOnly, runtime)`; the three
+argument overload still targets the 4.x line.
+
+A generated page runs in English and carries the Italian translation as well.
+The server side error messages are localised separately, through the
+`response_error*.properties` bundles.
+
+### Tests
+
+`mvn test` runs the unit tests and a browser test that renders a generated page
+on each supported formio.js line, fills it in, submits it, and feeds the posted
+JSON back through `Form.validateJsonFromFormio`. The browser test is skipped
+when no browser is found. To run it, install one with `playwright install
+chromium`, or point `-Dformio.browser.executable` at a Chromium binary.
+
+### License
+
+Apache License 2.0, see [LICENSE](LICENSE) and [NOTICE](NOTICE). The formio.js
+bundles that generated pages load at runtime are MIT licensed by Form.io LLC
+and are not part of this distribution.
 
 ### Usage example
 

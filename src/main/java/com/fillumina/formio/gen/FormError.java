@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>ncesco Illuminati <fillumina at gmail.com>
+ * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public enum FormError {
     NULL_VALUE("null.value"),
