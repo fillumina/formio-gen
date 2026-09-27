@@ -4,6 +4,13 @@ Helper to generate a JSON form description for the [formio](https://github.com/f
 
 Requires Java 21 or later.
 
+You describe a form in Java, the library produces the JSON formio understands,
+and it validates a submission against that same description. Neither half
+needs a formio server or the formio.js runtime: the schema is a plain data
+structure and the validation is plain Java. `CodeGenerator` is a convenience
+on top of that, which wraps the schema in a standalone HTML page pointing at
+a CDN; it is not the point of the library, and nothing else depends on it.
+
 ### See
 
  * https://help.form.io/
@@ -38,11 +45,15 @@ Every formio.js component with a Java class, and the formio type it emits:
 
 | Java class | formio type |
 | --- | --- |
-| `TextFieldComponent`, `EmailComponent`, `UrlComponent`, `PhoneNumberComponent`, `PasswordComponent`, `HiddenComponent`, `StringComponent`, `IntegerComponent`, `DecimalComponent`, `CurrencyComponent`, `BooleanComponent`, `DateTimeComponent` | `textfield`, `email`, `url`, `phoneNumber`, `password`, `hidden`, `string`, `number`, `number`, `currency`, `checkbox`, `datetime` |
+| `TextFieldComponent`, `EmailComponent`, `UrlComponent`, `PhoneNumberComponent`, `PasswordComponent`, `HiddenComponent`, `IntegerComponent`, `DecimalComponent`, `CurrencyComponent`, `BooleanComponent`, `DateTimeComponent` | `textfield`, `email`, `url`, `phoneNumber`, `password`, `hidden`, `number`, `number`, `currency`, `checkbox`, `datetime` |
 | `EnumComponent`, `RadioComponent`, `SelectBoxesComponent`, `TagsComponent`, `TimeComponent`, `DayComponent` | `select`, `radio`, `selectboxes`, `tags`, `time`, `day` |
 | `TextAreaComponent`, `WysiwygComponent`, `LineNumberedTextAreaComponent`, `HtmlComponent` | `textarea` with an editor, `content` |
 | `PanelContainer`, `DataGridContainer`, `EditGridContainer`, `FieldSetContainer`, `ColumnsContainer`, `TabsContainer`, `TableContainer`, `WellComponent`, `HtmlElementComponent` | `panel`, `datagrid`, `editgrid`, `fieldset`, `columns`, `tabs`, `table`, `well`, `htmlelement` |
 | `SubmitComponent`, `CancelComponent` | `submit`, `reset` |
+
+`StringComponent`, `NumberComponent`, `OptionComponent` and
+`SubFormArrayContainer` are base classes shared by the components above and
+are not used directly.
 
 Not covered yet: `file`, `signature`, `address`, `survey`, `datamap`,
 `list`, `recaptcha`. `file`, `signature`, `address` and `survey` submit a
@@ -78,6 +89,8 @@ and are not part of this distribution.
 ### Usage example
 
 Using [fluent-http](https://github.com/CodeStory/fluent-http), see [`App.java`](src/test/java/com/fillumina/formio/gen/App.java).
+The `generateHtml` call below takes three arguments and so targets formio.js
+4.x; pass a `FormioRuntime` as a fourth for 5.x.
 
 ```java
 public class App {
