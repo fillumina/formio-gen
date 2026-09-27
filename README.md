@@ -2,7 +2,7 @@
 
 Helper to generate a JSON form description for the [formio](https://github.com/formio/formio) project and validate its returned data.
 
-Requires Java 17 or later.
+Requires Java 21 or later.
 
 ### See
 
