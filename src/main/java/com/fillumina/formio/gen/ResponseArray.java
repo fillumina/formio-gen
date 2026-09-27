@@ -1,5 +1,6 @@
 package com.fillumina.formio.gen;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONArray;
@@ -24,6 +25,25 @@ public class ResponseArray extends ResponseValue {
             Object... validationParameters) {
         super(key, path, values, singleton, error, validationParameters);
         this.formResponseList = formResponseList;
+    }
+
+    /**
+     * @return the response of each entry, in the order they were submitted
+     */
+    List<FormResponse> getFormResponses() {
+        return Collections.unmodifiableList(formResponseList);
+    }
+
+    /**
+     * An error anywhere inside the entries is an error in this value, so a
+     * submission with a field missing in one row is not silently accepted.
+     */
+    @Override
+    public boolean isErrorPresent() {
+        if (super.isErrorPresent()) {
+            return true;
+        }
+        return formResponseList.stream().anyMatch(FormResponse::isErrorPresent);
     }
 
     /* package */ void addResponseValue(Map<String, ResponseValue> flatMap) {

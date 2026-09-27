@@ -12,7 +12,7 @@ package com.fillumina.formio.gen;
 public class TagsComponent extends StringComponent<TagsComponent> {
 
     public TagsComponent(String key) {
-        super("tags", key, false);
+        super("tags", key);
         json.put("storeas", "array");
         multiple(true);
     }

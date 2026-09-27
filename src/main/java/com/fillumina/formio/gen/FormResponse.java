@@ -1,6 +1,7 @@
 package com.fillumina.formio.gen;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -77,14 +78,29 @@ public class FormResponse {
 
     public String getErrorMessage(Locale locale) {
         StringBuilder buf = new StringBuilder();
+        appendErrorMessage("", buf, locale);
+        return buf.toString();
+    }
+
+    /**
+     * Appends the errors of this response, descending into the entries of a
+     * repeated component so that a field missing inside a row is reported with
+     * the path that identifies it.
+     */
+    /* package */ void appendErrorMessage(String prefix, StringBuilder buf, Locale locale) {
         map.forEach((name, response) -> {
-            if (response.isErrorPresent()) {
+            if (response instanceof ResponseArray) {
+                List<FormResponse> entries = ((ResponseArray) response).getFormResponses();
+                for (int i = 0; i < entries.size(); i++) {
+                    entries.get(i).appendErrorMessage(
+                            prefix + name + "[" + i + "]/", buf, locale);
+                }
+            } else if (response.isErrorPresent()) {
                 buf
-                        .append(name).append(": ")
+                        .append(prefix).append(name).append(": ")
                         .append(response.getErrorDescription(locale)).append("\n");
             }
         });
-        return buf.toString();
     }
 
     @Override

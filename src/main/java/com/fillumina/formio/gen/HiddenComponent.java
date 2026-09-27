@@ -8,6 +8,6 @@ package com.fillumina.formio.gen;
 public class HiddenComponent extends StringComponent<HiddenComponent> {
 
     public HiddenComponent(String key) {
-        super("hidden", key, false);
+        super("hidden", key);
     }
 }

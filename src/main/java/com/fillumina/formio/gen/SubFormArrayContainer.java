@@ -38,16 +38,21 @@ public abstract class SubFormArrayContainer<T extends SubFormArrayContainer<T>>
         allComponents.put(getKey(), this);
     }
 
+    /**
+     * Validates each entry as a form of its own. A value that is absent, null
+     * or not an array is not an error, it is an empty list of entries.
+     */
     @Override
     public ResponseValue validate(Object value) {
-        JSONArray array = (JSONArray) value;
         List<FormResponse> list = new ArrayList<>();
-        for (Object obj : array) {
-            JSONObject json = (JSONObject) obj;
-            list.add(JsonResponseValidator.validateJson(componentMap, json));
+        if (value instanceof JSONArray) {
+            for (Object obj : (JSONArray) value) {
+                if (obj instanceof JSONObject) {
+                    list.add(JsonResponseValidator.validateJson(componentMap, (JSONObject) obj));
+                }
+            }
         }
-        return new ResponseArray(getKey(), getPath(),
-                Collections.emptyList(), false, list);
+        return new ResponseArray(getKey(), getPath(), Collections.emptyList(), false, list);
     }
 
     protected Map<String, Component<?, ?>> getComponentMap() {

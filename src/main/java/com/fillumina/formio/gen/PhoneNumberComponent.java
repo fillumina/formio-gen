@@ -12,7 +12,7 @@ public class PhoneNumberComponent extends StringComponent<PhoneNumberComponent> 
     private static final String PHONE_PATTERN = "^\\+?[0-9 ().\\-]{5,}$";
 
     public PhoneNumberComponent(String key) {
-        super("phoneNumber", key, false);
+        super("phoneNumber", key);
         pattern(PHONE_PATTERN);
     }
 }

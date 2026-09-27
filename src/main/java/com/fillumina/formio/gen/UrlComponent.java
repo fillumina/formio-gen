@@ -11,7 +11,7 @@ public class UrlComponent extends StringComponent<UrlComponent> {
     private static final String URL_PATTERN = "^(https?|ftp)://\\S+$";
 
     public UrlComponent(String key) {
-        super("url", key, false);
+        super("url", key);
         pattern(URL_PATTERN);
     }
 }

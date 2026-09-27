@@ -9,7 +9,7 @@ package com.fillumina.formio.gen;
 public class PasswordComponent extends StringComponent<PasswordComponent> {
 
     public PasswordComponent(String key) {
-        super("password", key, false);
+        super("password", key);
         json.put("protected", true);
     }
 }

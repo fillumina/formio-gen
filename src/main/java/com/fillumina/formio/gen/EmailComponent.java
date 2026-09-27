@@ -11,7 +11,7 @@ public class EmailComponent extends StringComponent<EmailComponent> {
     private static final String EMAIL_PATTERN = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$";
 
     public EmailComponent(String key) {
-        super("email", key, false);
+        super("email", key);
         pattern(EMAIL_PATTERN);
     }
 }
