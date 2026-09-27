@@ -32,6 +32,23 @@ A generated page runs in English and carries the Italian translation as well.
 The server side error messages are localised separately, through the
 `response_error*.properties` bundles.
 
+### Components
+
+Every formio.js component with a Java class, and the formio type it emits:
+
+| Java class | formio type |
+| --- | --- |
+| `TextFieldComponent`, `EmailComponent`, `UrlComponent`, `PhoneNumberComponent`, `PasswordComponent`, `HiddenComponent`, `StringComponent`, `IntegerComponent`, `DecimalComponent`, `CurrencyComponent`, `BooleanComponent`, `DateTimeComponent` | `textfield`, `email`, `url`, `phoneNumber`, `password`, `hidden`, `string`, `number`, `number`, `currency`, `checkbox`, `datetime` |
+| `EnumComponent`, `RadioComponent`, `SelectBoxesComponent`, `TagsComponent` | `select`, `radio`, `selectboxes`, `tags` |
+| `TextAreaComponent`, `WysiwygComponent`, `LineNumberedTextAreaComponent`, `HtmlComponent` | `textarea` with an editor, `content` |
+| `PanelContainer`, `DataGridContainer`, `EditGridContainer`, `FieldSetContainer`, `ColumnsContainer`, `TabsContainer`, `TableContainer`, `WellComponent`, `HtmlElementComponent` | `panel`, `datagrid`, `editgrid`, `fieldset`, `columns`, `tabs`, `table`, `well`, `htmlelement` |
+| `SubmitComponent`, `CancelComponent` | `submit`, `reset` |
+
+Not covered yet: `file`, `signature`, `address`, `survey`, `datamap`, `day`,
+`time`, `list`, `recaptcha`. The first three submit a structure the validator
+has to model rather than a plain value, and `recaptcha` needs a server side
+round trip to Google, so none of them belong in this library as it stands.
+
 ### Tests
 
 `mvn test` runs the unit tests and a browser test that renders a generated page

@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 import org.json.JSONObject;
@@ -49,29 +50,36 @@ public class FormioJsRuntimeTest {
     private static final String BROWSER_PROPERTY = "formio.browser.executable";
     private static final String VALID_NAME = "Ada Lovelace";
     private static final String VALID_HEIGHT = "5";
+    private static final String VALID_MAIL = "ada@example.com";
 
     /**
      * One broken submission each: the other field always holds a valid value,
      * so the only rule the browser can complain about is the one under test.
      */
     private static final List<RuleCase> RULE_CASES = List.of(
-            new RuleCase("minLength", "Ab", VALID_HEIGHT, "must be longer than"),
-            new RuleCase("maxLength", "Ada Lovelace Junior", VALID_HEIGHT, "must be shorter than"),
-            new RuleCase("pattern", "Ada 42", VALID_HEIGHT, "does not match the pattern"),
-            new RuleCase("min", VALID_NAME, "0", "cannot be less than"),
-            new RuleCase("max", VALID_NAME, "20", "cannot be greater than"));
+            new RuleCase("minLength", "Ab", VALID_HEIGHT, VALID_MAIL, "must be longer than"),
+            new RuleCase("maxLength", "Ada Lovelace Junior", VALID_HEIGHT, VALID_MAIL,
+                    "must be shorter than"),
+            new RuleCase("pattern", "Ada 42", VALID_HEIGHT, VALID_MAIL,
+                    "does not match the pattern"),
+            new RuleCase("min", VALID_NAME, "0", VALID_MAIL, "cannot be less than"),
+            new RuleCase("max", VALID_NAME, "20", VALID_MAIL, "cannot be greater than"),
+            new RuleCase("email pattern", VALID_NAME, VALID_HEIGHT, "not-an-address",
+                    "does not match the pattern"));
 
     private static final class RuleCase {
 
         private final String rule;
         private final String name;
         private final String height;
+        private final String mail;
         private final String message;
 
-        RuleCase(String rule, String name, String height, String message) {
+        RuleCase(String rule, String name, String height, String mail, String message) {
             this.rule = rule;
             this.name = name;
             this.height = height;
+            this.mail = mail;
             this.message = message;
         }
     }
@@ -171,7 +179,7 @@ public class FormioJsRuntimeTest {
 
             for (RuleCase ruleCase : RULE_CASES) {
                 posted.clear();
-                fillRuleFields(page, ruleCase.name, ruleCase.height);
+                fillRuleFields(page, ruleCase);
 
                 page.click("button:has-text('Send Form')");
                 page.waitForTimeout(1_000);
@@ -184,7 +192,8 @@ public class FormioJsRuntimeTest {
 
                 JSONObject submitted = new JSONObject()
                         .put("name123", ruleCase.name)
-                        .put("height123", ruleCase.height);
+                        .put("height123", ruleCase.height)
+                        .put("mail123", ruleCase.mail);
                 assertTrue(form.validateJson(submitted).isErrorPresent(),
                         "Java accepted a submission that breaks " + ruleCase.rule);
             }
@@ -193,9 +202,108 @@ public class FormioJsRuntimeTest {
         }
     }
 
-    private static void fillRuleFields(Page page, String name, String height) {
-        page.fill("input[placeholder='Tell your name']", name);
-        page.fill("input[placeholder='Tell your real height']", height);
+    private static void fillRuleFields(Page page, RuleCase ruleCase) {
+        page.fill("input[placeholder='Tell your name']", ruleCase.name);
+        page.fill("input[placeholder='Tell your real height']", ruleCase.height);
+        page.fill("input[placeholder='Tell your email']", ruleCase.mail);
+    }
+
+    /**
+     * Renders every component added in this release on each formio.js line,
+     * fills in the ones that are plain inputs, and checks the posted JSON
+     * comes back through the Java validator unchanged. A value that arrived
+     * HTML escaped, an at sign turned into an entity for instance, would fail
+     * the equality check.
+     */
+    @ParameterizedTest
+    @EnumSource(FormioRuntime.class)
+    public void shouldRoundTripEveryNewComponentOnEveryFormioLine(FormioRuntime runtime)
+            throws Exception {
+        Path browser = findBrowser();
+        assumeTrue(browser != null, "no chromium found, skipping the browser test");
+
+        Form form = createEveryComponentForm();
+        List<String> posted = new CopyOnWriteArrayList<>();
+        HttpServer server = startServer(pageFor(form, runtime), posted);
+
+        try (Playwright playwright = Playwright.create()) {
+            Page page = openPage(playwright, browser, server);
+            List<String> pageErrors = new ArrayList<>();
+            page.onPageError(pageErrors::add);
+            page.waitForSelector("#formio .formio-component",
+                    new WaitForSelectorOptions().setTimeout(20_000));
+
+            assertEquals(runtime.version(), page.evaluate("() => Formio.version"),
+                    "the page did not load the formio.js version it targets");
+            assertTrue(pageErrors.isEmpty(), "the page reported errors: " + pageErrors);
+
+            for (String key : new String[]{"inside123", "mail123", "site123", "phone123",
+                    "pwd123", "price123", "sex123", "colours123", "tags123", "members123"}) {
+                assertTrue(page.locator(".formio-component-" + key).count() > 0,
+                        "formio.js " + runtime.version() + " did not render " + key
+                                + ", the page reads: " + page.locator("body").innerText());
+            }
+            assertTrue(page.locator("text=Terms apply").count() > 0,
+                    "formio.js " + runtime.version() + " did not render the html element"
+                            + ", the page reads: " + page.locator("body").innerText());
+
+            page.fill("input[placeholder='your email']", "ada@example.com");
+            page.fill("input[placeholder='your site']", "https://example.com/page");
+            page.fill("input[placeholder='your phone']", "+39 06-5555 1234");
+            page.fill("input[placeholder='your password']", "hunter2");
+            page.fill("input[placeholder='your price']", "19.99");
+            page.click("button:has-text('Send Form')");
+            waitForSubmission(posted);
+
+            assertTrue(pageErrors.isEmpty(), "the page reported errors: " + pageErrors);
+            assertEquals(1, posted.size(),
+                    "the form did not post exactly one submission, the page reads: "
+                            + page.locator("body").innerText());
+
+            String body = posted.get(0);
+            assertTrue(body.contains("ada@example.com"),
+                    "the email address arrived escaped: " + body);
+            assertTrue(body.contains("\"usr123\":\"ada\""),
+                    "the hidden default did not reach the submission: " + body);
+
+            FormResponse response = form.validateJsonFromFormio(body);
+            assertFalse(response.isErrorPresent(),
+                    response.getErrorMessage(Locale.ENGLISH) + " in " + body);
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    private static Form createEveryComponentForm() {
+        FormBuilder builder = new FormBuilder("everything", "Every component", "everything123");
+        builder.addComponent(new WellComponent("note123")
+                .title("Before you start")
+                .addComponent(new TextFieldComponent("inside123")
+                        .label("Inside the well").placeholder("a nested field")));
+        builder.addComponent(new HtmlElementComponent("legal123")
+                .content("<p>Terms apply</p>"));
+        builder.addComponent(new EmailComponent("mail123")
+                .label("Email").placeholder("your email").required(true));
+        builder.addComponent(new UrlComponent("site123")
+                .label("Site").placeholder("your site"));
+        builder.addComponent(new PhoneNumberComponent("phone123")
+                .label("Phone").placeholder("your phone"));
+        builder.addComponent(new PasswordComponent("pwd123")
+                .label("Password").placeholder("your password"));
+        builder.addComponent(new HiddenComponent("usr123").defaultValue("ada"));
+        builder.addComponent(new CurrencyComponent("price123")
+                .label("Price").placeholder("your price").currency("EUR"));
+        builder.addComponent(new RadioComponent("sex123")
+                .label("Sex").values("Male", "Female"));
+        builder.addComponent(new SelectBoxesComponent("colours123")
+                .label("Colours").values("red", "blue"));
+        builder.addComponent(new TagsComponent("tags123").label("Tags"));
+        builder.addComponent(new EditGridContainer("members123")
+                .label("Members")
+                .addComponent(new TextFieldComponent("name123")
+                        .label("Name").placeholder("a member name")));
+        builder.addComponent(new SubmitComponent().label("Send Form"));
+        return builder.build();
     }
 
     private static Form createRuleForm() {
@@ -214,6 +322,10 @@ public class FormioJsRuntimeTest {
                 .required(true)
                 .min(1)
                 .max(10));
+        builder.addComponent(new EmailComponent("mail123")
+                .label("Email")
+                .placeholder("Tell your email")
+                .required(true));
         builder.addComponent(new ColumnsContainer("col123")
                 .createColumn().addComponent(new SubmitComponent().label("Send Form")).endCol()
                 .createColumn().addComponent(new CancelComponent().label("Clear Data")).endCol());
