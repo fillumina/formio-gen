@@ -238,7 +238,8 @@ public class FormioJsRuntimeTest {
             assertTrue(pageErrors.isEmpty(), "the page reported errors: " + pageErrors);
 
             for (String key : new String[]{"inside123", "mail123", "site123", "phone123",
-                    "pwd123", "price123", "sex123", "colours123", "tags123", "members123"}) {
+                    "pwd123", "price123", "sex123", "colours123", "tags123", "members123",
+                    "at123", "born123"}) {
                 assertTrue(page.locator(".formio-component-" + key).count() > 0,
                         "formio.js " + runtime.version() + " did not render " + key
                                 + ", the page reads: " + page.locator("body").innerText());
@@ -252,6 +253,12 @@ public class FormioJsRuntimeTest {
             page.fill("input[placeholder='your phone']", "+39 06-5555 1234");
             page.fill("input[placeholder='your password']", "hunter2");
             page.fill("input[placeholder='your price']", "19.99");
+            page.fill("input[placeholder='a time of day']", "14:30");
+            page.selectOption("#formio select[name=month]", "3");
+            page.locator("#formio .formio-component-born123 input[type=number]")
+                    .nth(0).fill("14");
+            page.locator("#formio .formio-component-born123 input[type=number]")
+                    .nth(1).fill("2026");
             page.click("button:has-text('Send Form')");
             waitForSubmission(posted);
 
@@ -265,6 +272,10 @@ public class FormioJsRuntimeTest {
                     "the email address arrived escaped: " + body);
             assertTrue(body.contains("\"usr123\":\"ada\""),
                     "the hidden default did not reach the submission: " + body);
+            assertTrue(body.contains("14:30:00"),
+                    "the time did not arrive in its data format: " + body);
+            assertTrue(body.contains("03/14/2026"),
+                    "the day did not arrive month first: " + body);
 
             FormResponse response = form.validateJsonFromFormio(body);
             assertFalse(response.isErrorPresent(),
@@ -298,6 +309,9 @@ public class FormioJsRuntimeTest {
         builder.addComponent(new SelectBoxesComponent("colours123")
                 .label("Colours").values("red", "blue"));
         builder.addComponent(new TagsComponent("tags123").label("Tags"));
+        builder.addComponent(new TimeComponent("at123")
+                .label("Time").placeholder("a time of day"));
+        builder.addComponent(new DayComponent("born123").label("Born").dayFirst(false));
         builder.addComponent(new EditGridContainer("members123")
                 .label("Members")
                 .addComponent(new TextFieldComponent("name123")

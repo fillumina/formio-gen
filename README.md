@@ -39,15 +39,22 @@ Every formio.js component with a Java class, and the formio type it emits:
 | Java class | formio type |
 | --- | --- |
 | `TextFieldComponent`, `EmailComponent`, `UrlComponent`, `PhoneNumberComponent`, `PasswordComponent`, `HiddenComponent`, `StringComponent`, `IntegerComponent`, `DecimalComponent`, `CurrencyComponent`, `BooleanComponent`, `DateTimeComponent` | `textfield`, `email`, `url`, `phoneNumber`, `password`, `hidden`, `string`, `number`, `number`, `currency`, `checkbox`, `datetime` |
-| `EnumComponent`, `RadioComponent`, `SelectBoxesComponent`, `TagsComponent` | `select`, `radio`, `selectboxes`, `tags` |
+| `EnumComponent`, `RadioComponent`, `SelectBoxesComponent`, `TagsComponent`, `TimeComponent`, `DayComponent` | `select`, `radio`, `selectboxes`, `tags`, `time`, `day` |
 | `TextAreaComponent`, `WysiwygComponent`, `LineNumberedTextAreaComponent`, `HtmlComponent` | `textarea` with an editor, `content` |
 | `PanelContainer`, `DataGridContainer`, `EditGridContainer`, `FieldSetContainer`, `ColumnsContainer`, `TabsContainer`, `TableContainer`, `WellComponent`, `HtmlElementComponent` | `panel`, `datagrid`, `editgrid`, `fieldset`, `columns`, `tabs`, `table`, `well`, `htmlelement` |
 | `SubmitComponent`, `CancelComponent` | `submit`, `reset` |
 
-Not covered yet: `file`, `signature`, `address`, `survey`, `datamap`, `day`,
-`time`, `list`, `recaptcha`. The first three submit a structure the validator
-has to model rather than a plain value, and `recaptcha` needs a server side
-round trip to Google, so none of them belong in this library as it stands.
+Not covered yet: `file`, `signature`, `address`, `survey`, `datamap`,
+`list`, `recaptcha`. `file`, `signature`, `address` and `survey` submit a
+structure the validator has to model rather than a plain value, and
+`recaptcha` needs a server side round trip to Google, so none of them belong
+in this library as it stands.
+
+A `day` is submitted as a slash separated string, `MM/dd/yyyy` or
+`dd/MM/yyyy` depending on the component's `dayFirst`, and may be filled in
+only partly. `DayComponent` reads the same property to parse it and hands
+back a `PartialDate`, where a part the user did not choose is zero. A `time`
+is submitted as `HH:mm:ss`.
 
 ### Tests
 
