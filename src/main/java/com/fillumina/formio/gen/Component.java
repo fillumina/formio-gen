@@ -55,6 +55,16 @@ public abstract class Component<T extends Component<T,V>,V> {
         return true;
     }
 
+    /**
+     * @return true when the component is expected to appear in a submission, so
+     *         that a missing one is an error if it is required. A layout
+     *         container is not, it is never submitted; a repeated section is,
+     *         because the rows are what the user filled in.
+     */
+    public boolean isExpectedInSubmission() {
+        return isValue();
+    }
+
     /** Used to return flat map of options. */
     public T path(String path) {
         this.path = path;

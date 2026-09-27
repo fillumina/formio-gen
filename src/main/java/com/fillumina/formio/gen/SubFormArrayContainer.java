@@ -39,8 +39,18 @@ public abstract class SubFormArrayContainer<T extends SubFormArrayContainer<T>>
     }
 
     /**
+     * The rows are what the user filled in, so a required section is expected
+     * in the submission even though the section itself returns no value.
+     */
+    @Override
+    public boolean isExpectedInSubmission() {
+        return isRequired();
+    }
+
+    /**
      * Validates each entry as a form of its own. A value that is absent, null
-     * or not an array is not an error, it is an empty list of entries.
+     * or not an array is an empty list of entries, which is an error only when
+     * the section is required.
      */
     @Override
     public ResponseValue validate(Object value) {
@@ -51,6 +61,10 @@ public abstract class SubFormArrayContainer<T extends SubFormArrayContainer<T>>
                     list.add(JsonResponseValidator.validateJson(componentMap, (JSONObject) obj));
                 }
             }
+        }
+        if (isRequired() && list.isEmpty()) {
+            return new ResponseArray(getKey(), getPath(), Collections.emptyList(), false,
+                    FormError.NULL_VALUE, list);
         }
         return new ResponseArray(getKey(), getPath(), Collections.emptyList(), false, list);
     }

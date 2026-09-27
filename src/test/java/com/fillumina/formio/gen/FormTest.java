@@ -102,6 +102,10 @@ public class FormTest {
         json.put("text123", "Elementare whatson");
         json.put("area123", "Nel mezzo del cammin di nostra vita");
         json.put("int123", 12);
+        // the form asks for at least one row in the panel
+        json.put("datagrid123", new JSONArray().put(new JSONObject()
+                .put("bool_multiple", true)
+                .put("text_multiple", "Ada")));
 
         String jsonText = FormioMessageCreator.createFormioJson(json);
 

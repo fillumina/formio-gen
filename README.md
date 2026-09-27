@@ -50,6 +50,11 @@ structure the validator has to model rather than a plain value, and
 `recaptcha` needs a server side round trip to Google, so none of them belong
 in this library as it stands.
 
+A `datagrid` or an `editgrid` is the one kind of container the user
+fills in, so `minItems` and `maxItems` on one are a row count and
+`required` means the section has to be there, not only that its fields are
+filled in.
+
 A `day` is submitted as a slash separated string, `MM/dd/yyyy` or
 `dd/MM/yyyy` depending on the component's `dayFirst`, and may be filled in
 only partly. `DayComponent` reads the same property to parse it and hands

@@ -47,20 +47,4 @@ public class DataGridContainer extends SubFormArrayContainer<DataGridContainer> 
         }
         return this;
     }
-
-    @Override
-    public DataGridContainer minItems(Integer minItems) {
-        if (minItems != null) {
-            validate.put("minLength", minItems);
-        }
-        return this;
-    }
-
-    @Override
-    public DataGridContainer maxItems(Integer maxItems) {
-        if (maxItems != null) {
-            validate.put("maxLength", maxItems);
-        }
-        return this;
-    }
 }

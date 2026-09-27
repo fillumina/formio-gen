@@ -37,12 +37,18 @@ public class Container<T extends Container<T>> extends AbstractNonValueComponent
         return Collections.unmodifiableMap(components);
     }
 
+    /**
+     * Marks this component and everything inside it as required. A repeated
+     * section that is required must also be present in the submission, see
+     * {@link #isExpectedInSubmission()}.
+     */
     @Override
     public T required(Boolean required) {
+        T self = super.required(required);
         if (required != null) {
             components.values().forEach(c -> c.required(required));
         }
-        return (T) this;
+        return self;
     }
 
 }

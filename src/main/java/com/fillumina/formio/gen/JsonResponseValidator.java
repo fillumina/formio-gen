@@ -38,7 +38,7 @@ public class JsonResponseValidator {
             try {
                 value = json.get(key);
             } catch (JSONException ex) {
-                if (component.isValue() && component.isRequired()) {
+                if (component.isExpectedInSubmission() && component.isRequired()) {
                     errorPresent = true;
                     ResponseValue response = new ResponseValue(key, null, null,
                             component.isSingleton(),
